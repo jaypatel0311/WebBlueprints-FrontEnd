@@ -227,11 +227,7 @@ function Header() {
                       </Typography>
                     </Box>
                   </Box>
-                  <MenuItem
-                    component={Link}
-                    to="/profile"
-                    onClick={handleClose}
-                  >
+                  <MenuItem component={Link} to="/" onClick={handleClose}>
                     Profile
                   </MenuItem>
                   <MenuItem onClick={handleLogout} disabled={isLoggingOut}>
