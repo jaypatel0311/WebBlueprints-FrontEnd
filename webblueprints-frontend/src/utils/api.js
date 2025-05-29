@@ -21,4 +21,16 @@ export const api = {
     });
     return response.json();
   },
+
+  put: async (url, data) => {
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authService.getToken()}`,
+      },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
 };

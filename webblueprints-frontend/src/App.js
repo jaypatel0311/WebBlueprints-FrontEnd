@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { ThemeProvider, createTheme } from "@mui/material";
+import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import Home from "./pages/Home/Home";
@@ -8,13 +8,20 @@ import Login from "./pages/Auth/Login";
 import { AuthProvider } from "./context/authContext";
 import Signup from "./pages/Auth/Signup";
 import { ProtectedRoute } from "./components/common/ProtectedRoute";
+import Profile from "./pages/Profile/Profile";
 
-const theme = createTheme();
+const theme = createTheme({
+  typography: {
+    fontFamily: ['"PT Sans",', "sans-serif"].join(","),
+  },
+  // ...other theme options
+});
 
 function App() {
   return (
     <AuthProvider>
       <ThemeProvider theme={theme}>
+        <CssBaseline />
         <BrowserRouter>
           <div className="App">
             <Header />
@@ -29,6 +36,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Home />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
                   </ProtectedRoute>
                 }
               />

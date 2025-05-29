@@ -127,6 +127,9 @@ function Header() {
         <ListItem button component={Link} to="/profile">
           <ListItemText primary="Profile" />
         </ListItem>
+        <ListItem button component={Link} to="/">
+          <ListItemText primary="My purchases" />
+        </ListItem>
         <ListItem button onClick={handleLogout} disabled={isLoggingOut}>
           <ListItemText primary={isLoggingOut ? "Logging out..." : "Logout"} />
         </ListItem>
@@ -227,8 +230,15 @@ function Header() {
                       </Typography>
                     </Box>
                   </Box>
-                  <MenuItem component={Link} to="/" onClick={handleClose}>
+                  <MenuItem
+                    component={Link}
+                    to="/profile"
+                    onClick={handleClose}
+                  >
                     Profile
+                  </MenuItem>
+                  <MenuItem component={Link} to="/" onClick={handleClose}>
+                    My Orders
                   </MenuItem>
                   <MenuItem onClick={handleLogout} disabled={isLoggingOut}>
                     {isLoggingOut ? "Logging out..." : "Logout"}

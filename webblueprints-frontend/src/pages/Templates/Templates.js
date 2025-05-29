@@ -138,11 +138,11 @@ function Templates() {
           WebkitTextFillColor: "transparent",
         }}
       >
-        Portfolio Templates
+        Templates
       </Typography>
-      <Grid container spacing={4}>
+      <Grid container spacing={2}>
         {/* Filter Sidebar */}
-        <Grid item xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Paper
             elevation={2}
             sx={{
@@ -157,6 +157,13 @@ function Templates() {
               Filters
             </Typography>
             <Divider sx={{ mb: 2 }} />
+            <TextField
+              label="Search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              fullWidth
+              sx={{ mb: 2 }}
+            />
             <FormControl fullWidth sx={{ mb: 2 }}>
               <InputLabel>Category</InputLabel>
               <Select
@@ -174,24 +181,28 @@ function Templates() {
             </FormControl>
             <FormGroup sx={{ mb: 2 }}>
               <Typography variant="subtitle2">Tags</Typography>
-              {tags.map((tag) => (
-                <FormControlLabel
-                  key={tag}
-                  control={
-                    <Checkbox
-                      checked={selectedTags.includes(tag)}
-                      onChange={(e) => {
-                        setSelectedTags(
-                          e.target.checked
-                            ? [...selectedTags, tag]
-                            : selectedTags.filter((t) => t !== tag)
-                        );
-                      }}
+              <Grid container spacing={0.5}>
+                {tags.map((tag) => (
+                  <Grid size={6} key={tag} sx={{ display: "flex" }}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={selectedTags.includes(tag)}
+                          onChange={(e) => {
+                            setSelectedTags(
+                              e.target.checked
+                                ? [...selectedTags, tag]
+                                : selectedTags.filter((t) => t !== tag)
+                            );
+                          }}
+                        />
+                      }
+                      label={tag}
+                      sx={{ flex: 1, m: 0 }}
                     />
-                  }
-                  label={tag}
-                />
-              ))}
+                  </Grid>
+                ))}
+              </Grid>
             </FormGroup>
             <FormControl fullWidth sx={{ mb: 2 }}>
               <InputLabel>Price</InputLabel>
@@ -225,24 +236,28 @@ function Templates() {
             </FormControl>
             <FormGroup sx={{ mb: 2 }}>
               <Typography variant="subtitle2">Tech Stack</Typography>
-              {techStack.map((tech) => (
-                <FormControlLabel
-                  key={tech}
-                  control={
-                    <Checkbox
-                      checked={selectedTech.includes(tech)}
-                      onChange={(e) => {
-                        setSelectedTech(
-                          e.target.checked
-                            ? [...selectedTech, tech]
-                            : selectedTech.filter((t) => t !== tech)
-                        );
-                      }}
+              <Grid container spacing={0.5}>
+                {techStack.map((tech) => (
+                  <Grid size={6} key={tech} sx={{ display: "flex" }}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={selectedTech.includes(tech)}
+                          onChange={(e) => {
+                            setSelectedTech(
+                              e.target.checked
+                                ? [...selectedTech, tech]
+                                : selectedTech.filter((t) => t !== tech)
+                            );
+                          }}
+                        />
+                      }
+                      label={tech}
+                      sx={{ flex: 1, m: 0 }}
                     />
-                  }
-                  label={tech}
-                />
-              ))}
+                  </Grid>
+                ))}
+              </Grid>
             </FormGroup>
             <FormControlLabel
               control={
@@ -269,18 +284,11 @@ function Templates() {
                 ))}
               </Select>
             </FormControl>
-            <TextField
-              label="Search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              fullWidth
-              sx={{ mb: 2 }}
-            />
           </Paper>
         </Grid>
         {/* Templates Grid */}
-        <Grid item xs={12} md={9}>
-          <Grid container spacing={4}>
+        <Grid size={{ xs: 12, md: 9 }}>
+          <Grid container spacing={2}>
             {filteredTemplates.map((template) => (
               <Grid
                 item
