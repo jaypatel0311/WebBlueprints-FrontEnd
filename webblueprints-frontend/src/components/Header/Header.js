@@ -22,6 +22,8 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "@mui/material/styles";
 import { useAuth } from "../../context/authContext";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import Badge from "@mui/material/Badge";
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
@@ -64,6 +66,8 @@ function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const cartItems = [];
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -100,6 +104,48 @@ function Header() {
     }
     return "U";
   };
+
+  const cartDrawerContent = (
+    <Box sx={{ width: 350, p: 2 }}>
+      <Typography variant="h6" gutterBottom>
+        Shopping Cart
+      </Typography>
+
+      {cartItems.length === 0 ? (
+        <Typography color="text.secondary">Your cart is empty</Typography>
+      ) : (
+        <>
+          <List>
+            {cartItems.map((item) => (
+              <ListItem key={item.id} divider>
+                <ListItemText
+                  primary={item.name}
+                  secondary={`$${item.price}`}
+                />
+              </ListItem>
+            ))}
+          </List>
+
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="subtitle1" fontWeight="bold">
+              Total: ${cartItems.reduce((sum, item) => sum + item.price, 0)}
+            </Typography>
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ mt: 2 }}
+              onClick={() => {
+                setCartOpen(false);
+                navigate("/checkout");
+              }}
+            >
+              Checkout
+            </Button>
+          </Box>
+        </>
+      )}
+    </Box>
+  );
 
   // Drawer content for mobile
   const drawerContent = (
@@ -143,8 +189,24 @@ function Header() {
         <LogoText component={Link} to={user ? "/" : "/login"}>
           WebBlueprints
         </LogoText>
+        <Drawer
+          anchor="right"
+          open={cartOpen}
+          onClose={() => setCartOpen(false)}
+        >
+          {cartDrawerContent}
+        </Drawer>
         {isMobile ? (
           <>
+            <IconButton
+              color="inherit"
+              onClick={() => setCartOpen(true)}
+              sx={{ mr: 1 }}
+            >
+              <Badge badgeContent={cartItems.length} color="error">
+                <ShoppingCartIcon />
+              </Badge>
+            </IconButton>
             <IconButton
               edge="end"
               color="inherit"
@@ -178,9 +240,20 @@ function Header() {
         ) : (
           <NavButtons>
             {user && (
-              <Button color="inherit" component={Link} to="/templates">
-                Templates
-              </Button>
+              <>
+                <Button color="inherit" component={Link} to="/templates">
+                  Templates
+                </Button>
+                <IconButton
+                  color="inherit"
+                  onClick={() => setCartOpen(true)}
+                  sx={{ mr: 1 }}
+                >
+                  <Badge badgeContent={cartItems.length} color="error">
+                    <ShoppingCartIcon />
+                  </Badge>
+                </IconButton>
+              </>
             )}
             {user ? (
               <>
