@@ -4,6 +4,7 @@ import {
   PeopleOutline,
   ShoppingBagOutlined,
   AttachMoney,
+  OpenInBrowser,
 } from "@mui/icons-material";
 
 const StatCard = ({ title, value, icon, color }) => (
@@ -54,16 +55,16 @@ const AdminDashboard = () => {
       ),
       color: theme.palette.success.main,
     },
-    // {
-    //   title: "Templates",
-    //   value: "156",
-    //   icon: (
-    //     <TemplatePresent
-    //       sx={{ fontSize: 40, color: theme.palette.warning.main }}
-    //     />
-    //   ),
-    //   color: theme.palette.warning.main,
-    // },
+    {
+      title: "Templates",
+      value: "156",
+      icon: (
+        <OpenInBrowser
+          sx={{ fontSize: 40, color: theme.palette.warning.main }}
+        />
+      ),
+      color: theme.palette.warning.main,
+    },
     {
       title: "Revenue",
       value: "$12,345",
@@ -82,14 +83,14 @@ const AdminDashboard = () => {
 
       <Grid container spacing={3}>
         {stats.map((stat, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
             <StatCard {...stat} />
           </Grid>
         ))}
       </Grid>
 
       <Grid container spacing={3} sx={{ mt: 3 }}>
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
               Recent Orders
@@ -97,7 +98,7 @@ const AdminDashboard = () => {
             {/* Add orders table or chart here */}
           </Paper>
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
               Top Templates

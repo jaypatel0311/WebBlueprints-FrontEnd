@@ -15,12 +15,14 @@ import {
   PeopleOutline,
   ShoppingBagOutlined,
   Logout,
+  OpenInBrowser,
 } from "@mui/icons-material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 
 const menuItems = [
   { text: "Dashboard", icon: <Dashboard />, path: "/admin" },
+  { text: "Templates", icon: <OpenInBrowser />, path: "/admin/templates" },
   { text: "Users", icon: <PeopleOutline />, path: "/admin/users" },
   { text: "Orders", icon: <ShoppingBagOutlined />, path: "/admin/orders" },
 ];
@@ -46,6 +48,8 @@ const AdminSidebar = () => {
         height: "100vh",
         display: "flex",
         flexDirection: "column",
+        background: "linear-gradient(180deg, #1976d2 0%, #1565c0 100%)",
+        color: "white",
       }}
     >
       {/* Admin Profile Section */}
@@ -57,26 +61,23 @@ const AdminSidebar = () => {
           mb: 2,
         }}
       >
-        <Avatar
-          sx={{
-            bgcolor: "primary.main",
-            width: 40,
-            height: 40,
-          }}
-        >
+        <Avatar sx={{ bgcolor: "white", color: "#1976d2" }}>
           {user?.username?.charAt(0)}
         </Avatar>
         <Box>
-          <Typography variant="subtitle1" fontWeight="bold">
+          <Typography variant="subtitle1" fontWeight="bold" color="white">
             {user?.username}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            sx={{ color: "rgba(255, 255, 255, 0.7)" }}
+          >
             {user?.email}
           </Typography>
         </Box>
       </Box>
 
-      <Divider sx={{ my: 2 }} />
+      <Divider sx={{ my: 2, borderColor: "rgba(255, 255, 255, 0.12)" }} />
 
       <Typography variant="h6" sx={{ p: 2, fontWeight: "bold" }}>
         Admin Panel
@@ -94,19 +95,24 @@ const AdminSidebar = () => {
             sx={{
               borderRadius: 1,
               mb: 1,
+              color: "white",
+              "&:hover": {
+                backgroundColor: "rgba(255, 255, 255, 0.08)",
+              },
               "&.Mui-selected": {
-                backgroundColor: "primary.main",
-                color: "white",
-                "&:hover": {
-                  backgroundColor: "primary.dark",
+                backgroundColor: "#2196F3",
+                "&::before": {
+                  opacity: 1,
                 },
-                "& .MuiListItemIcon-root": {
-                  color: "white",
+                "&:hover": {
+                  backgroundColor: "#1976D2",
                 },
               },
             }}
           >
-            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemIcon sx={{ color: "inherit", minWidth: 40 }}>
+              {item.icon}
+            </ListItemIcon>
             <ListItemText primary={item.text} />
           </ListItem>
         ))}
@@ -116,10 +122,18 @@ const AdminSidebar = () => {
       <Button
         startIcon={<Logout />}
         onClick={handleLogout}
+        sx={{
+          mt: "auto",
+          mb: 2,
+          color: "white",
+          borderColor: "rgba(255, 255, 255, 0.5)",
+          "&:hover": {
+            borderColor: "white",
+            backgroundColor: "rgba(255, 255, 255, 0.08)",
+          },
+        }}
         variant="outlined"
-        color="primary"
         fullWidth
-        sx={{ mt: "auto", mb: 2 }}
       >
         Logout
       </Button>
