@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   List,
   ListItem,
@@ -19,6 +19,7 @@ import {
 } from "@mui/icons-material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
+import ConfirmDialog from "../common/ConfirmDialog";
 
 const menuItems = [
   { text: "Dashboard", icon: <Dashboard />, path: "/admin" },
@@ -31,8 +32,14 @@ const AdminSidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const [openDialog, setOpenDialog] = useState(false);
 
-  const handleLogout = async () => {
+  const handleLogoutClick = () => {
+    setOpenDialog(true);
+  };
+
+  const handleConfirmLogout = async () => {
+    setOpenDialog(false);
     try {
       await logout();
       navigate("/login");
@@ -121,7 +128,7 @@ const AdminSidebar = () => {
       {/* Logout Button */}
       <Button
         startIcon={<Logout />}
-        onClick={handleLogout}
+        onClick={handleLogoutClick}
         sx={{
           mt: "auto",
           mb: 2,
@@ -137,6 +144,14 @@ const AdminSidebar = () => {
       >
         Logout
       </Button>
+
+      <ConfirmDialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        title="Confirm Logout"
+        content="Are you sure you want to logout?"
+        onConfirm={handleConfirmLogout}
+      />
     </Box>
   );
 };
