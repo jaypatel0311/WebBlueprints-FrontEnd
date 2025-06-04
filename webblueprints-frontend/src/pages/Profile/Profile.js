@@ -17,10 +17,12 @@ import { api } from "../../utils/api";
 import PersonalInfo from "./PersonalInfo";
 import BillingInfo from "./BillingInfo";
 import Downloads from "./Downloads";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState(0);
+  const navigate = useNavigate();
 
   // Change Password State
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -46,8 +48,7 @@ const Profile = () => {
   });
 
   const handleBecomeAuthor = () => {
-    // Redirect or open a modal, or send a request
-    window.location.href = "/become-author"; // Adjust as needed
+    navigate("/add-template"); // Navigate to add template page
   };
 
   // Change Password Handler

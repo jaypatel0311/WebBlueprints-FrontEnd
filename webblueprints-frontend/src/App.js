@@ -1,14 +1,16 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import Header from "./components/Header/Header";
-import Footer from "./components/Footer/Footer";
 import Home from "./pages/Home/Home";
 import Templates from "./pages/Templates/Templates";
 import Login from "./pages/Auth/Login";
-import { AuthProvider } from "./context/authContext";
+import { useAuth } from "./context/authContext";
 import Signup from "./pages/Auth/Signup";
 import { ProtectedRoute } from "./components/common/ProtectedRoute";
 import Profile from "./pages/Profile/Profile";
+import AdminLayout from "./components/Admin/Layout";
+import AdminDashboard from "./pages/Admin/Dashboard";
+import { RoleProvider } from "./context/roleContext";
 
 const theme = createTheme({
   typography: {
@@ -18,13 +20,15 @@ const theme = createTheme({
 });
 
 function App() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
   return (
-    <AuthProvider>
+    <RoleProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <BrowserRouter>
           <div className="App">
-            <Header />
+            {!isAdmin && <Header />}
             <Routes>
               {/* Public Routes */}
               <Route path="/login" element={<Login />} />
@@ -47,11 +51,32 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+
               <Route
                 path="/templates"
                 element={
                   <ProtectedRoute>
                     <Templates />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Protected Admin Route */}
+              {/* <Route
+                path="/add-template"
+                element={
+                  <RoleRoute requiredRole={ROLES.ADMIN}>
+                    <AddTemplate />
+                  </RoleRoute>
+                }
+              /> */}
+              {/* Admin Routes */}
+              <Route
+                path="/admin/*"
+                element={
+                  <ProtectedRoute>
+                    <AdminLayout>
+                      <AdminDashboard />
+                    </AdminLayout>
                   </ProtectedRoute>
                 }
               />
@@ -62,7 +87,7 @@ function App() {
           </div>
         </BrowserRouter>
       </ThemeProvider>
-    </AuthProvider>
+    </RoleProvider>
   );
 }
 

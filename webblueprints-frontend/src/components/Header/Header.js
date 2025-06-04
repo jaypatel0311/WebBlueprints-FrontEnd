@@ -68,6 +68,7 @@ function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const cartItems = [];
+  const isAdmin = user?.role === "admin";
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -112,7 +113,26 @@ function Header() {
       </Typography>
 
       {cartItems.length === 0 ? (
-        <Typography color="text.secondary">Your cart is empty</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            py: 6,
+            textAlign: "center",
+          }}
+        >
+          <ShoppingCartIcon
+            sx={{
+              fontSize: 120,
+              color: "#bdbdbd",
+              mb: 3,
+            }}
+          />
+          <Typography color="text.secondary">
+            There are no items in your cart yet
+          </Typography>
+        </Box>
       ) : (
         <>
           <List>
@@ -198,15 +218,17 @@ function Header() {
         </Drawer>
         {isMobile ? (
           <>
-            <IconButton
-              color="inherit"
-              onClick={() => setCartOpen(true)}
-              sx={{ mr: 1 }}
-            >
-              <Badge badgeContent={cartItems.length} color="error">
-                <ShoppingCartIcon />
-              </Badge>
-            </IconButton>
+            {user && (
+              <IconButton
+                color="inherit"
+                onClick={() => setCartOpen(true)}
+                sx={{ mr: 1 }}
+              >
+                <Badge badgeContent={cartItems.length} color="error">
+                  <ShoppingCartIcon />
+                </Badge>
+              </IconButton>
+            )}
             <IconButton
               edge="end"
               color="inherit"

@@ -8,6 +8,7 @@ import {
   Typography,
   Paper,
   CircularProgress,
+  Alert,
 } from "@mui/material";
 import { useAuth } from "../../context/authContext";
 import { Notification } from "../../components/common/Notification";
@@ -53,11 +54,23 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
+    const formData = new FormData(e.target);
     setLoading(true);
 
     try {
-      await login(formData);
-      navigate("/");
+      const data = await login({
+        email: formData.get("email"),
+        password: formData.get("password"),
+      });
+
+      // Access role directly from response
+      const userRole = data.role;
+
+      if (userRole === "admin") {
+        navigate("/admin", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
     } catch (error) {
       console.log("Login error:", error);
 

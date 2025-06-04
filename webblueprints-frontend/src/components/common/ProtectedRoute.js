@@ -2,7 +2,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { CircularProgress } from "@mui/material";
 
-export const ProtectedRoute = ({ children }) => {
+export const ProtectedRoute = ({ children, requiredRole }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
@@ -16,7 +16,7 @@ export const ProtectedRoute = ({ children }) => {
     );
   }
 
-  if (!user) {
+  if (!user || (requiredRole && user.role !== requiredRole)) {
     // Save the attempted route for redirect after login
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
