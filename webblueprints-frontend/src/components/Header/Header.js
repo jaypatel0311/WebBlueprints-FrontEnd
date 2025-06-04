@@ -24,6 +24,7 @@ import { useTheme } from "@mui/material/styles";
 import { useAuth } from "../../context/authContext";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Badge from "@mui/material/Badge";
+import ConfirmDialog from "../common/ConfirmDialog";
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
@@ -68,7 +69,7 @@ function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const cartItems = [];
-  const isAdmin = user?.role === "admin";
+  const [openDialog, setOpenDialog] = useState(false);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -81,12 +82,16 @@ function Header() {
     setAnchorEl(null);
   };
 
-  const handleLogout = async () => {
+  const handleLogoutClick = () => {
+    handleClose(); // Close menu
+    setOpenDialog(true);
+  };
+
+  const handleConfirmLogout = async () => {
+    setOpenDialog(false);
     try {
       setIsLoggingOut(true);
       await logout();
-      handleClose();
-      setDrawerOpen(false);
       navigate("/login", { replace: true });
     } catch (error) {
       console.error("Logout failed:", error);
@@ -196,7 +201,11 @@ function Header() {
         <ListItem button component={Link} to="/">
           <ListItemText primary="My purchases" />
         </ListItem>
-        <ListItem button onClick={handleLogout} disabled={isLoggingOut}>
+        <ListItem
+          button
+          onClick={() => handleLogoutClick()}
+          disabled={isLoggingOut}
+        >
           <ListItemText primary={isLoggingOut ? "Logging out..." : "Logout"} />
         </ListItem>
       </List>
@@ -335,7 +344,10 @@ function Header() {
                   <MenuItem component={Link} to="/" onClick={handleClose}>
                     My Orders
                   </MenuItem>
-                  <MenuItem onClick={handleLogout} disabled={isLoggingOut}>
+                  <MenuItem
+                    onClick={() => handleLogoutClick()}
+                    disabled={isLoggingOut}
+                  >
                     {isLoggingOut ? "Logging out..." : "Logout"}
                   </MenuItem>
                 </Menu>
@@ -354,6 +366,13 @@ function Header() {
                 Login
               </Button>
             )}
+            <ConfirmDialog
+              open={openDialog}
+              onClose={() => setOpenDialog(false)}
+              title="Confirm Logout"
+              content="Are you sure you want to logout?"
+              onConfirm={handleConfirmLogout}
+            />
           </NavButtons>
         )}
       </StyledToolbar>
