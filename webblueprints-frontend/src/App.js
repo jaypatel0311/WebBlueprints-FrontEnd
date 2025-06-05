@@ -11,6 +11,7 @@ import Profile from "./pages/Profile/Profile";
 import AdminLayout from "./components/Admin/Layout";
 import AdminDashboard from "./pages/Admin/Dashboard";
 import { RoleProvider } from "./context/roleContext";
+import AddTemplate from "./pages/Templates/addTemplate";
 
 const theme = createTheme({
   typography: {
@@ -60,15 +61,14 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              {/* Protected Admin Route */}
-              {/* <Route
+              <Route
                 path="/add-template"
                 element={
-                  <RoleRoute requiredRole={ROLES.ADMIN}>
+                  <ProtectedRoute>
                     <AddTemplate />
-                  </RoleRoute>
+                  </ProtectedRoute>
                 }
-              /> */}
+              />
               {/* Admin Routes */}
               <Route
                 path="/admin/*"
