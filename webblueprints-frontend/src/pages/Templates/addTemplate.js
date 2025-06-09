@@ -8,34 +8,114 @@ import {
   MenuItem,
   CircularProgress,
   Alert,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import api from "../../utils/axiosInterceptor";
 
 const categories = [
   "Website Templates",
   "Email Templates",
   "Landing Pages",
   "Admin Dashboards",
+  "Portfolio Templates",
+  "E-commerce Templates",
+  "Blog Templates",
+  "Resume/CV Templates",
+  "Event Templates",
+  "Mobile App Templates",
+  "Newsletter Templates",
+  "SaaS Product Templates",
+  "One Page Templates",
+  "Coming Soon Templates",
+  "Documentation Templates",
+  "CRM Templates",
+  "Marketing Templates",
+  "Business Templates",
+  "Real Estate Templates",
+  "Restaurant/Food Templates",
+];
+
+const tags = [
+  "Responsive",
+  "Dark Theme",
+  "Light Theme",
+  "Modern",
+  "Minimal",
+  "Creative",
+  "Professional",
+  "Animated",
+  "Mobile-First",
+  "SEO Friendly",
+];
+
+const techStacks = [
+  "HTML/CSS",
+  "React",
+  "Vue",
+  "Angular",
+  "Bootstrap",
+  "Tailwind CSS",
+  "JavaScript",
+  "TypeScript",
+  "Node.js",
+  "PHP",
+  "WordPress",
+  "Django",
+  "Flask",
+  "Ruby on Rails",
+  "ASP.NET",
 ];
 
 const AddTemplate = () => {
   const [formData, setFormData] = useState({
-    name: "",
+    title: "",
     description: "",
-    price: "",
+    tags: [],
     category: "",
+    techStack: "",
+    price: 0,
+    isPremium: false,
   });
-  const [thumbnail, setThumbnail] = useState(null);
-  const [templateFiles, setTemplateFiles] = useState(null);
-  const [previewImages, setPreviewImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const handleChange = (e) => {
+    const { name, value, type } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "number" ? Number(value) : value,
+    }));
+  };
+
+  const handleTagChange = (event) => {
+    setFormData((prev) => ({
+      ...prev,
+      tags: Array.isArray(event.target.value) ? event.target.value : [],
+    }));
+  };
+
+  const [files, setFiles] = useState({
+    previewImage: null,
+    templateFiles: null,
+  });
+
+  const resetForm = () => {
     setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+      title: "",
+      description: "",
+      tags: [],
+      category: "",
+      techStack: "",
+      price: 0,
+      isPremium: false,
+    });
+    setFiles({
+      previewImage: null,
+      templateFiles: null,
     });
   };
 
@@ -44,25 +124,55 @@ const AddTemplate = () => {
     setLoading(true);
     setError("");
 
+    // Use FormData for file uploads and form fields
+    const formDataToSend = new FormData();
+
+    // Add each field to FormData individually
+    formDataToSend.append("title", formData.title);
+    formDataToSend.append("description", formData.description);
+    formDataToSend.append("category", formData.category);
+    formDataToSend.append("techStack", formData.techStack);
+    formDataToSend.append("price", Number(formData.price));
+    formDataToSend.append("isPremium", formData.isPremium);
+
+    // Handle array fields with JSON.stringify
+    if (formData.tags && formData.tags.length > 0) {
+      formDataToSend.append("tags", JSON.stringify(formData.tags));
+    }
+
+    // Add files
+    if (files.previewImage) {
+      formDataToSend.append("previewImage", files.previewImage);
+    }
+    if (files.templateFiles) {
+      formDataToSend.append("templateFiles", files.templateFiles);
+    }
+
     try {
-      const formDataToSend = new FormData();
-      Object.keys(formData).forEach((key) => {
-        formDataToSend.append(key, formData[key]);
+      await api.post("/templates", formDataToSend, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
-
-      if (thumbnail) formDataToSend.append("thumbnail", thumbnail);
-      if (templateFiles) formDataToSend.append("templateFiles", templateFiles);
-      previewImages.forEach((image) => {
-        formDataToSend.append("previewImages", image);
-      });
-
-      // Add your API call here
-      setSuccess("Template added successfully!");
+      setSuccess("Template created successfully!");
+      resetForm();
     } catch (err) {
-      setError(err.message || "Failed to add template");
+      const errorMessage = err.response?.data?.message;
+      setError(
+        Array.isArray(errorMessage)
+          ? errorMessage.join(", ")
+          : errorMessage || "Failed to create template"
+      );
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFileChange = (type) => (event) => {
+    setFiles((prev) => ({
+      ...prev,
+      [type]: event.target.files[0],
+    }));
   };
 
   return (
@@ -87,8 +197,8 @@ const AddTemplate = () => {
           <TextField
             fullWidth
             label="Template Name"
-            name="name"
-            value={formData.name}
+            name="title"
+            value={formData.title}
             onChange={handleChange}
             required
             sx={{ mb: 2 }}
@@ -107,13 +217,77 @@ const AddTemplate = () => {
           />
 
           <TextField
+            select
+            fullWidth
+            label="Tags"
+            name="tags"
+            value={formData.tags}
+            onChange={handleTagChange}
+            SelectProps={{
+              multiple: true,
+            }}
+            sx={{ mb: 2 }}
+          >
+            {tags.map((tag) => (
+              <MenuItem key={tag} value={tag}>
+                {tag}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
             fullWidth
             label="Price"
             name="price"
             type="number"
+            inputProps={{
+              step: "0.01",
+              min: "0",
+            }}
             value={formData.price}
-            onChange={handleChange}
+            onChange={(e) => {
+              const value = parseFloat(e.target.value);
+              const price = isNaN(value) ? 0 : Math.max(0, value);
+
+              // Automatically set isPremium if price > 0
+              setFormData((prev) => ({
+                ...prev,
+                price,
+                isPremium: price > 0 ? true : prev.isPremium,
+              }));
+            }}
             required
+            helperText="Templates with price > 0 are automatically marked as premium"
+            sx={{ mb: 2 }}
+          />
+
+          <FormControlLabel
+            control={
+              <Switch
+                checked={formData.isPremium || formData.price > 0}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    isPremium: formData.price > 0 ? true : e.target.checked,
+                  })
+                }
+                disabled={formData.price > 0}
+              />
+            }
+            label={
+              <>
+                Premium Template
+                {formData.price > 0 && (
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ ml: 1 }}
+                  >
+                    (Auto-enabled for paid templates)
+                  </Typography>
+                )}
+              </>
+            }
             sx={{ mb: 2 }}
           />
 
@@ -134,24 +308,41 @@ const AddTemplate = () => {
             ))}
           </TextField>
 
+          <TextField
+            select
+            fullWidth
+            label="Tech Stack"
+            name="techStack"
+            value={formData.techStack}
+            onChange={handleChange}
+            sx={{ mb: 2 }}
+          >
+            {techStacks.map((tech) => (
+              <MenuItem key={tech} value={tech}>
+                {tech}
+              </MenuItem>
+            ))}
+          </TextField>
+
           <Box sx={{ mb: 3 }}>
-            <Typography gutterBottom>Thumbnail Image</Typography>
+            <Typography gutterBottom>Preview Image</Typography>
             <Button
               variant="outlined"
               component="label"
               startIcon={<CloudUploadIcon />}
+              sx={{ mr: 2 }}
             >
-              Upload Thumbnail
+              Upload Image
               <input
                 type="file"
                 hidden
                 accept="image/*"
-                onChange={(e) => setThumbnail(e.target.files[0])}
+                onChange={handleFileChange("previewImage")}
               />
             </Button>
-            {thumbnail && (
+            {files.previewImage && (
               <Typography variant="body2" sx={{ mt: 1 }}>
-                Selected: {thumbnail.name}
+                Selected: {files.previewImage.name}
               </Typography>
             )}
           </Box>
@@ -163,40 +354,17 @@ const AddTemplate = () => {
               component="label"
               startIcon={<CloudUploadIcon />}
             >
-              Upload Template Files
+              Upload Files
               <input
                 type="file"
                 hidden
                 accept=".zip"
-                onChange={(e) => setTemplateFiles(e.target.files[0])}
+                onChange={handleFileChange("templateFiles")}
               />
             </Button>
-            {templateFiles && (
+            {files.templateFiles && (
               <Typography variant="body2" sx={{ mt: 1 }}>
-                Selected: {templateFiles.name}
-              </Typography>
-            )}
-          </Box>
-
-          <Box sx={{ mb: 3 }}>
-            <Typography gutterBottom>Preview Images</Typography>
-            <Button
-              variant="outlined"
-              component="label"
-              startIcon={<CloudUploadIcon />}
-            >
-              Upload Preview Images
-              <input
-                type="file"
-                hidden
-                accept="image/*"
-                multiple
-                onChange={(e) => setPreviewImages([...e.target.files])}
-              />
-            </Button>
-            {previewImages.length > 0 && (
-              <Typography variant="body2" sx={{ mt: 1 }}>
-                {previewImages.length} images selected
+                Selected: {files.templateFiles.name}
               </Typography>
             )}
           </Box>

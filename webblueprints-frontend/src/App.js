@@ -12,6 +12,7 @@ import AdminLayout from "./components/Admin/Layout";
 import AdminDashboard from "./pages/Admin/Dashboard";
 import { RoleProvider } from "./context/roleContext";
 import AddTemplate from "./pages/Templates/addTemplate";
+import AdminTemplates from "./pages/Admin/Templates";
 
 const theme = createTheme({
   typography: {
@@ -75,7 +76,15 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <AdminLayout>
-                      <AdminDashboard />
+                      <Routes>
+                        <Route index element={<AdminDashboard />} />
+                        <Route path="templates" element={<AdminTemplates />} />
+                        <Route path="templates/add" element={<AddTemplate />} />
+                        <Route
+                          path="templates/edit/:id"
+                          element={<AddTemplate />}
+                        />
+                      </Routes>
                     </AdminLayout>
                   </ProtectedRoute>
                 }
