@@ -16,8 +16,6 @@ import {
   Alert,
 } from "@mui/material";
 import TemplateCard from "../../components/common/TemplateCard";
-import Image1 from "../../assets/minimalist-portfolio.png";
-import Image2 from "../../assets/tech-portfolio.png";
 import { useEffect, useState } from "react";
 import api from "../../utils/axiosInterceptor";
 
