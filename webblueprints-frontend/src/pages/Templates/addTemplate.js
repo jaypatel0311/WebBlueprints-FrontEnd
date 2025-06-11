@@ -257,7 +257,7 @@ const AddTemplate = () => {
               }));
             }}
             required
-            helperText="Templates with price > 0 are automatically marked as premium"
+            helperText="Templates with price greater than 0 are automatically marked as premium"
             sx={{ mb: 2 }}
           />
 

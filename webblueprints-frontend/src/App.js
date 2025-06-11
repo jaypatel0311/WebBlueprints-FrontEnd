@@ -13,6 +13,7 @@ import AdminDashboard from "./pages/Admin/Dashboard";
 import { RoleProvider } from "./context/roleContext";
 import AddTemplate from "./pages/Templates/addTemplate";
 import AdminTemplates from "./pages/Admin/Templates";
+import { CartProvider } from "./context/cartContext";
 
 const theme = createTheme({
   typography: {
@@ -26,76 +27,84 @@ function App() {
   const isAdmin = user?.role === "admin";
   return (
     <RoleProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <BrowserRouter>
-          <div className="App">
-            {!isAdmin && <Header />}
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
+      <CartProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <BrowserRouter>
+            <div className="App">
+              {!isAdmin && <Header />}
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
 
-              {/* Protected Routes */}
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Home />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Protected Routes */}
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      <Home />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/templates"
-                element={
-                  <ProtectedRoute>
-                    <Templates />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/add-template"
-                element={
-                  <ProtectedRoute>
-                    <AddTemplate />
-                  </ProtectedRoute>
-                }
-              />
-              {/* Admin Routes */}
-              <Route
-                path="/admin/*"
-                element={
-                  <ProtectedRoute>
-                    <AdminLayout>
-                      <Routes>
-                        <Route index element={<AdminDashboard />} />
-                        <Route path="templates" element={<AdminTemplates />} />
-                        <Route path="templates/add" element={<AddTemplate />} />
-                        <Route
-                          path="templates/edit/:id"
-                          element={<AddTemplate />}
-                        />
-                      </Routes>
-                    </AdminLayout>
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/templates"
+                  element={
+                    <ProtectedRoute>
+                      <Templates />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/add-template"
+                  element={
+                    <ProtectedRoute>
+                      <AddTemplate />
+                    </ProtectedRoute>
+                  }
+                />
+                {/* Admin Routes */}
+                <Route
+                  path="/admin/*"
+                  element={
+                    <ProtectedRoute>
+                      <AdminLayout>
+                        <Routes>
+                          <Route index element={<AdminDashboard />} />
+                          <Route
+                            path="templates"
+                            element={<AdminTemplates />}
+                          />
+                          <Route
+                            path="templates/add"
+                            element={<AddTemplate />}
+                          />
+                          <Route
+                            path="templates/edit/:id"
+                            element={<AddTemplate />}
+                          />
+                        </Routes>
+                      </AdminLayout>
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Redirect from root to login if not authenticated */}
-              <Route path="*" element={<Navigate to="/login" replace />} />
-            </Routes>
-          </div>
-        </BrowserRouter>
-      </ThemeProvider>
+                {/* Redirect from root to login if not authenticated */}
+                <Route path="*" element={<Navigate to="/login" replace />} />
+              </Routes>
+            </div>
+          </BrowserRouter>
+        </ThemeProvider>
+      </CartProvider>
     </RoleProvider>
   );
 }

@@ -18,6 +18,7 @@ import {
   ListItemText,
   Divider,
   useMediaQuery,
+  ListItemAvatar,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "@mui/material/styles";
@@ -25,6 +26,8 @@ import { useAuth } from "../../context/authContext";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Badge from "@mui/material/Badge";
 import ConfirmDialog from "../common/ConfirmDialog";
+import { useCart } from "../../context/cartContext";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
@@ -70,6 +73,7 @@ function Header() {
   const [cartOpen, setCartOpen] = useState(false);
   const cartItems = [];
   const [openDialog, setOpenDialog] = useState(false);
+  const { cart, totalItems, totalAmount, removeFromCart } = useCart();
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -117,7 +121,7 @@ function Header() {
         Shopping Cart
       </Typography>
 
-      {cartItems.length === 0 ? (
+      {cart.length === 0 ? (
         <Box
           sx={{
             display: "flex",
@@ -141,11 +145,38 @@ function Header() {
       ) : (
         <>
           <List>
-            {cartItems.map((item) => (
-              <ListItem key={item.id} divider>
+            {cart.map((item) => (
+              <ListItem
+                key={item._id}
+                divider
+                secondaryAction={
+                  <IconButton
+                    edge="end"
+                    onClick={() => removeFromCart(item._id)}
+                    size="small"
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                }
+              >
+                <ListItemAvatar>
+                  <Avatar
+                    src={item.previewImageUrl}
+                    variant="rounded"
+                    alt={item.title}
+                  />
+                </ListItemAvatar>
                 <ListItemText
-                  primary={item.name}
-                  secondary={`$${item.price}`}
+                  primary={item.title}
+                  secondary={
+                    <Typography
+                      variant="body2"
+                      color="primary.main"
+                      fontWeight="medium"
+                    >
+                      {item.price === 0 ? "FREE" : `$${item.price.toFixed(2)}`}
+                    </Typography>
+                  }
                 />
               </ListItem>
             ))}
@@ -153,12 +184,16 @@ function Header() {
 
           <Box sx={{ mt: 2 }}>
             <Typography variant="subtitle1" fontWeight="bold">
-              Total: ${cartItems.reduce((sum, item) => sum + item.price, 0)}
+              Total: ${totalAmount.toFixed(2)}
             </Typography>
             <Button
               variant="contained"
               fullWidth
-              sx={{ mt: 2 }}
+              sx={{
+                mt: 2,
+                background: "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
+                color: "white",
+              }}
               onClick={() => {
                 setCartOpen(false);
                 navigate("/checkout");

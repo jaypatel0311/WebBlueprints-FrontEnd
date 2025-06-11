@@ -14,10 +14,12 @@ import {
   Paper,
   CircularProgress,
   Alert,
+  Snackbar,
 } from "@mui/material";
 import TemplateCard from "../../components/common/TemplateCard";
 import { useEffect, useState } from "react";
 import api from "../../utils/axiosInterceptor";
+import { useCart } from "../../context/cartContext";
 
 const categories = [
   "Portfolio",
@@ -72,6 +74,12 @@ function Templates() {
   const [responsiveOnly, setResponsiveOnly] = useState(false);
   const [selectedColor, setSelectedColor] = useState("");
   const [search, setSearch] = useState("");
+  const { addToCart } = useCart();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -89,6 +97,21 @@ function Templates() {
 
     fetchTemplates();
   }, []);
+
+  // Add to cart handler
+  const handleAddToCart = (template) => {
+    addToCart(template);
+    setSnackbar({
+      open: true,
+      message: `${template.title} added to cart!`,
+      severity: "success",
+    });
+  };
+
+  // Handle snackbar close
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
 
   // Filtering logic
   const filteredTemplates = templates.filter((tpl) => {
@@ -282,7 +305,10 @@ function Templates() {
               <Grid container spacing={2}>
                 {filteredTemplates.map((template) => (
                   <Grid key={template._id} size={{ xs: 12, sm: 6, md: 4 }}>
-                    <TemplateCard template={template} />
+                    <TemplateCard
+                      template={template}
+                      onAddToCart={handleAddToCart}
+                    />
                   </Grid>
                 ))}
               </Grid>
@@ -290,6 +316,21 @@ function Templates() {
           </Grid>
         </>
       )}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert
+          elevation={6}
+          variant="filled"
+          severity={snackbar.severity}
+          onClose={handleCloseSnackbar}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
