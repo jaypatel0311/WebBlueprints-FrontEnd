@@ -18,6 +18,7 @@ import PersonalInfo from "./PersonalInfo";
 import BillingInfo from "./BillingInfo";
 import Downloads from "./Downloads";
 import { useNavigate } from "react-router-dom";
+import AuthorApplication from "./AuthorApplication";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -41,7 +42,7 @@ const Profile = () => {
 
   // Billing Info State (mock)
   const [billingInfo, setBillingInfo] = useState({
-    cardHolder: "John Doe",
+    cardHolder: "Jay Patel",
     cardNumber: "**** **** **** 1234",
     expiry: "12/26",
     address: "123 Main St, City, Country",
@@ -175,7 +176,17 @@ const Profile = () => {
       <Container maxWidth="md" sx={{ py: 4 }}>
         {/* Personal Info Tab */}
         {activeTab === 0 && (
-          <Paper sx={{ p: 4 }}>
+          <Paper
+            elevation={0}
+            sx={{
+              p: 2,
+              overflow: "hidden",
+              borderRadius: 2,
+              boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+              border: "1px solid",
+              borderColor: "divider",
+            }}
+          >
             <PersonalInfo
               user={user}
               showChangeEmail={showChangeEmail}
@@ -219,25 +230,7 @@ const Profile = () => {
         {activeTab === 2 && <Downloads />}
 
         {activeTab === 3 && (
-          <Paper sx={{ p: 6, textAlign: "center" }}>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-              Share your creativity with the world! Apply to become an author
-              and start selling your own templates on our platform.
-            </Typography>
-            <Button
-              variant="contained"
-              size="large"
-              sx={{
-                px: 4,
-                py: 1.5,
-                textTransform: "none",
-                fontWeight: "medium",
-              }}
-              onClick={handleBecomeAuthor}
-            >
-              Apply Now
-            </Button>
-          </Paper>
+          <AuthorApplication handleBecomeAuthor={handleBecomeAuthor} />
         )}
       </Container>
     </Box>

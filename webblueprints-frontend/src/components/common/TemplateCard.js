@@ -11,7 +11,6 @@ import {
   Box,
 } from "@mui/material";
 import PreviewIcon from "@mui/icons-material/Preview";
-import CodeIcon from "@mui/icons-material/Code";
 import { IconButton } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 
@@ -65,30 +64,6 @@ const TemplateCard = ({ template, onAddToCart }) => {
           >
             {template.title}
           </Typography>
-
-          <IconButton
-            onClick={() => onAddToCart(template)}
-            color="primary"
-            aria-label="add to cart"
-            size="small"
-            sx={{
-              backgroundColor: "rgba(33, 150, 243, 0.1)",
-              borderRadius: "50%",
-              p: 1,
-              transition: "all 0.2s ease",
-              "&:hover": {
-                backgroundColor: "rgba(33, 150, 243, 0.2)",
-                transform: "scale(1.1)",
-              },
-            }}
-          >
-            <AddShoppingCartIcon
-              sx={{
-                fontSize: "1.2rem",
-                color: "primary.main",
-              }}
-            />
-          </IconButton>
         </Box>
         <Typography
           variant="body2"
@@ -170,36 +145,39 @@ const TemplateCard = ({ template, onAddToCart }) => {
           pt: 0,
           display: "flex",
           justifyContent: "space-between",
+          gap: 1,
         }}
       >
-        <Button
-          variant="outlined"
-          size="small"
-          startIcon={<PreviewIcon />}
-          onClick={() => window.open(template.demoUrl, "_blank")}
-          sx={{
-            borderRadius: "20px",
-            textTransform: "none",
-            borderColor: "primary.main",
-            color: "primary.main",
-            px: 2,
-            "&:hover": {
-              backgroundColor: "rgba(33, 150, 243, 0.08)",
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<PreviewIcon />}
+            onClick={() => window.open(template.demoUrl, "_blank")}
+            sx={{
+              borderRadius: "20px",
+              textTransform: "none",
               borderColor: "primary.main",
-              transform: "translateY(-2px)",
-              boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-              transition: "all 0.2s ease",
-            },
-          }}
-        >
-          Live Demo
-        </Button>
+              color: "primary.main",
+              px: 2,
+              "&:hover": {
+                backgroundColor: "rgba(33, 150, 243, 0.08)",
+                borderColor: "primary.main",
+                transform: "translateY(-2px)",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                transition: "all 0.2s ease",
+              },
+            }}
+          >
+            Live Demo
+          </Button>
+        </Box>
 
         <Button
           variant="contained"
           size="small"
-          startIcon={<CodeIcon />}
-          onClick={() => window.open(template.codeUrl, "_blank")}
+          startIcon={<AddShoppingCartIcon />}
+          onClick={() => onAddToCart(template)}
           sx={{
             borderRadius: "20px",
             textTransform: "none",
@@ -214,7 +192,7 @@ const TemplateCard = ({ template, onAddToCart }) => {
             },
           }}
         >
-          View Code
+          Add to Cart
         </Button>
       </CardActions>
     </Card>
