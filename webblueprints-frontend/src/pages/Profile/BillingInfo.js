@@ -45,27 +45,6 @@ const BillingInfo = ({
         borderColor: "divider",
       }}
     >
-      <Typography
-        variant="h4"
-        fontWeight="bold"
-        sx={{
-          mb: 4,
-          position: "relative",
-          "&:after": {
-            content: '""',
-            position: "absolute",
-            bottom: -10,
-            left: 0,
-            width: 60,
-            height: 4,
-            borderRadius: 2,
-            backgroundColor: "primary.main",
-          },
-        }}
-      >
-        Billing Information
-      </Typography>
-
       <Box component="form" onSubmit={handleBillingInfoSave}>
         <Grid container spacing={3}>
           {/* Card Information Section */}

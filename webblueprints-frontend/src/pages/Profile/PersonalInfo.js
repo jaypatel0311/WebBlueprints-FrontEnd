@@ -55,74 +55,8 @@ const PersonalInfo = ({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
-    <Box sx={{ maxWidth: 1000, mx: "auto", p: 2 }}>
-      {/* Header */}
-      <Typography
-        variant="h4"
-        fontWeight="bold"
-        sx={{
-          mb: 4,
-          position: "relative",
-          "&:after": {
-            content: '""',
-            position: "absolute",
-            left: 0,
-            bottom: -8,
-            width: 60,
-            height: 4,
-            borderRadius: 2,
-            bgcolor: "primary.main",
-          },
-        }}
-      >
-        Personal Information
-      </Typography>
-
-      <Grid container spacing={3}>
-        {/* Profile Overview Card */}
-        <Grid item size={12}>
-          <Paper
-            elevation={2}
-            sx={{
-              p: 3,
-              borderRadius: 2,
-              mb: 2,
-              boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-              <Avatar
-                sx={{
-                  width: 80,
-                  height: 80,
-                  bgcolor: "primary.main",
-                  boxShadow: "0 3px 10px rgba(0,0,0,0.15)",
-                }}
-              >
-                {user?.username?.charAt(0)?.toUpperCase() || "U"}
-              </Avatar>
-
-              <Box>
-                <Typography variant="h5" fontWeight="bold" mb={0.5}>
-                  {user?.username || "User"}
-                </Typography>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <EmailIcon fontSize="small" color="action" />
-                  <Typography color="text.secondary">{user?.email}</Typography>
-                  <Chip
-                    size="small"
-                    icon={<CheckCircleIcon fontSize="small" />}
-                    label="Verified"
-                    color="success"
-                    variant="outlined"
-                    sx={{ ml: 1 }}
-                  />
-                </Box>
-              </Box>
-            </Box>
-          </Paper>
-        </Grid>
-
+    <Box sx={{ maxWidth: 1000, mx: "auto", p: 4 }}>
+      <Grid container spacing={4}>
         {/* Email Change Section */}
         <Grid size={{ xs: 12, md: 6 }}>
           <Card
