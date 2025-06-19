@@ -211,28 +211,6 @@ function Home() {
                     >
                       Explore Templates
                     </Button>
-                    <Button
-                      variant="outlined"
-                      size="large"
-                      onClick={() => navigate("/pricing")}
-                      sx={{
-                        borderRadius: "50px",
-                        px: 4,
-                        py: 1.5,
-                        fontSize: "1rem",
-                        fontWeight: 600,
-                        borderColor: "white",
-                        color: "white",
-                        "&:hover": {
-                          borderColor: "white",
-                          backgroundColor: "rgba(255,255,255,0.1)",
-                          transform: "translateY(-3px)",
-                        },
-                        transition: "all 0.3s ease",
-                      }}
-                    >
-                      View Pricing
-                    </Button>
                   </Box>
                 </Box>
               </Fade>
