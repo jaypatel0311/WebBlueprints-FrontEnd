@@ -661,7 +661,7 @@ function Home() {
                   "Perfect display on all devices from mobile phones to large desktops",
               },
             ].map((feature, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
                 <AnimatedBox sx={{ animationDelay: `${index * 0.15}s` }}>
                   <Paper
                     elevation={0}
@@ -734,7 +734,7 @@ function Home() {
                 icon: <PhoneIphoneIcon fontSize="large" />,
               },
             ].map((step, index) => (
-              <Grid item xs={12} md={4} key={index}>
+              <Grid size={{ xs: 12, md: 4 }} key={index}>
                 <AnimatedBox sx={{ animationDelay: `${index * 0.2}s` }}>
                   <Box
                     sx={{
@@ -818,7 +818,7 @@ function Home() {
                 avatar: "/avatar-3.jpg",
               },
             ].map((testimonial, index) => (
-              <Grid item xs={12} md={4} key={index}>
+              <Grid size={{ xs: 12, md: 4 }} key={index}>
                 <AnimatedBox sx={{ animationDelay: `${index * 0.15}s` }}>
                   <Paper
                     elevation={2}
