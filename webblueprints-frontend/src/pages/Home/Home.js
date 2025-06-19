@@ -488,7 +488,10 @@ function Home() {
 
           <Grid container spacing={3}>
             {featuredTemplates.slice(0, 6).map((template, index) => (
-              <Grid item xs={12} sm={6} md={4} key={template?._id || index}>
+              <Grid
+                size={{ xs: 12, sm: 6, md: 4 }}
+                key={template?._id || index}
+              >
                 <AnimatedBox sx={{ animationDelay: `${index * 0.1}s` }}>
                   <Card
                     sx={{
