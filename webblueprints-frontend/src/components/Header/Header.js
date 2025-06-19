@@ -67,6 +67,7 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
 function Header() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);

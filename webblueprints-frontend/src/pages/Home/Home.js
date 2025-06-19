@@ -8,6 +8,7 @@ import {
   Paper,
 } from "@mui/material";
 import { styled } from "@mui/system";
+import { useNavigate } from "react-router-dom";
 
 const HeroSection = styled(Box)(({ theme }) => ({
   background: "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
@@ -50,6 +51,7 @@ const SearchBox = styled(TextField)(({ theme }) => ({
 }));
 
 function Home() {
+  const navigate = useNavigate();
   return (
     <Box>
       <HeroSection>
@@ -145,6 +147,7 @@ function Home() {
           <Button
             variant="contained"
             size="large"
+            onClick={() => navigate("/templates")}
             sx={{
               px: 6,
               py: 2,
