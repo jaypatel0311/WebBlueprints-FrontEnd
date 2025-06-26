@@ -1,0 +1,20 @@
+/* public/demo-assets/demo-watermark.css */
+.demo-watermark {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(33, 150, 243, 0.7);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  
+  body {
+    border: 3px solid rgba(33, 150, 243, 0.3);
+    min-height: 100vh;
+    box-sizing: border-box;
+  }

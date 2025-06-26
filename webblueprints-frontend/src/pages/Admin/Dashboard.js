@@ -1,11 +1,21 @@
-import React from "react";
-import { Box, Grid, Paper, Typography, useTheme } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  CircularProgress,
+  Grid,
+  Paper,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import {
   PeopleOutline,
   ShoppingBagOutlined,
   AttachMoney,
   OpenInBrowser,
 } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import api from "../../utils/axiosInterceptor";
+import TemplateCard from "../../components/common/TemplateCard";
 
 const StatCard = ({ title, value, icon, color }) => (
   <Paper sx={{ p: 3 }}>
@@ -33,6 +43,27 @@ const StatCard = ({ title, value, icon, color }) => (
 
 const AdminDashboard = () => {
   const theme = useTheme();
+  const [topTemplates, setTopTemplates] = useState([]);
+  const [templatesLoading, setTemplatesLoading] = useState(true);
+  const navigate = useNavigate();
+
+  const fetchTopTemplates = async () => {
+    setTemplatesLoading(true);
+    try {
+      const response = await api.get("/templates");
+      console.log("Fetched top templates:", response.data);
+
+      setTopTemplates(response.data.templates.slice(0, 5)); // Get top 5 templates
+    } catch (error) {
+      console.error("Error fetching top templates:", error);
+    } finally {
+      setTemplatesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTopTemplates();
+  }, []);
 
   const stats = [
     {
@@ -99,11 +130,76 @@ const AdminDashboard = () => {
           </Paper>
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}>
-          <Paper sx={{ p: 3 }}>
+          <Paper sx={{ p: 3, mb: 3 }}>
             <Typography variant="h6" gutterBottom>
               Top Templates
             </Typography>
-            {/* Add top templates list here */}
+
+            {templatesLoading ? (
+              <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              <Grid container spacing={3} sx={{ mt: 1 }}>
+                {topTemplates.length === 0 ? (
+                  <Grid item xs={12}>
+                    <Box sx={{ p: 4, textAlign: "center" }}>
+                      <Typography color="text.secondary">
+                        No templates available
+                      </Typography>
+                    </Box>
+                  </Grid>
+                ) : (
+                  topTemplates.map((template, index) => (
+                    <Grid
+                      item
+                      xs={12}
+                      sm={6}
+                      md={4}
+                      lg={3}
+                      key={template._id || index}
+                    >
+                      <Box sx={{ position: "relative" }}>
+                        {/* Add rank badge */}
+                        {index < 3 && (
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              top: -5,
+                              right: -5,
+                              zIndex: 1,
+                              backgroundColor:
+                                index === 0
+                                  ? "gold"
+                                  : index === 1
+                                  ? "silver"
+                                  : "#cd7f32", // bronze
+                              color: index === 0 ? "black" : "white",
+                              borderRadius: "50%",
+                              width: 30,
+                              height: 30,
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              fontWeight: "bold",
+                              boxShadow: 2,
+                            }}
+                          >
+                            {index + 1}
+                          </Box>
+                        )}
+
+                        {/* Use the common TemplateCard component */}
+                        <TemplateCard
+                          template={template}
+                          showActions={false} // Hide action buttons for cleaner dashboard view
+                        />
+                      </Box>
+                    </Grid>
+                  ))
+                )}
+              </Grid>
+            )}
           </Paper>
         </Grid>
       </Grid>

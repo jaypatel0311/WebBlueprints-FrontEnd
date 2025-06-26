@@ -1,22 +1,47 @@
-const TOKEN_KEY = "access_token";
-const REFRESH_TOKEN_KEY = "refresh_token";
-const USER_KEY = "user_data";
+class TokenService {
+  getToken() {
+    return localStorage.getItem("access_token");
+  }
 
-const tokenService = {
-  getToken: () => localStorage.getItem(TOKEN_KEY),
-  setToken: (token) => localStorage.setItem(TOKEN_KEY, token),
-  getRefreshToken: () => localStorage.getItem(REFRESH_TOKEN_KEY),
-  setRefreshToken: (token) => localStorage.setItem(REFRESH_TOKEN_KEY, token),
-  getUser: () => {
-    const userData = localStorage.getItem(USER_KEY);
-    return userData ? JSON.parse(userData) : null;
-  },
-  setUser: (user) => localStorage.setItem(USER_KEY, JSON.stringify(user)),
-  clearAll: () => {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-  },
-};
+  setToken(token) {
+    localStorage.setItem("access_token", token);
+  }
 
-export default tokenService;
+  removeToken() {
+    localStorage.removeItem("access_token");
+  }
+
+  getRefreshToken() {
+    return localStorage.getItem("refresh_token");
+  }
+
+  setRefreshToken(token) {
+    localStorage.setItem("refresh_token", token);
+  }
+
+  removeRefreshToken() {
+    localStorage.removeItem("refresh_token");
+  }
+
+  getUser() {
+    const userStr = localStorage.getItem("user");
+    if (!userStr) return null;
+
+    try {
+      return JSON.parse(userStr);
+    } catch (e) {
+      console.error("Failed to parse user data from localStorage", e);
+      return null;
+    }
+  }
+
+  setUser(user) {
+    localStorage.setItem("user", JSON.stringify(user));
+  }
+
+  removeUser() {
+    localStorage.removeItem("user");
+  }
+}
+
+export default new TokenService();

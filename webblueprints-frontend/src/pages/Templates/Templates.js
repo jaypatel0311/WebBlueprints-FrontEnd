@@ -88,7 +88,6 @@ const techStack = [
   "Ruby on Rails",
   "ASP.NET",
 ];
-const colorSchemes = ["Dark", "Light", "Colorful"];
 
 function Templates() {
   // Filter state
@@ -100,8 +99,6 @@ function Templates() {
   const [selectedPrice, setSelectedPrice] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [selectedTech, setSelectedTech] = useState([]);
-  const [responsiveOnly, setResponsiveOnly] = useState(false);
-  const [selectedColor, setSelectedColor] = useState("");
   const [search, setSearch] = useState("");
   const { addToCart } = useCart();
   const [snackbar, setSnackbar] = useState({
@@ -487,9 +484,6 @@ function Templates() {
       return false;
     }
 
-    // Responsive filter
-    if (responsiveOnly && !templateTags.includes("Responsive")) return false;
-
     // Tech stack filter
     if (
       selectedTech.length > 0 &&
@@ -497,9 +491,6 @@ function Templates() {
     ) {
       return false;
     }
-
-    // Color scheme filter
-    if (selectedColor && tpl.colorScheme !== selectedColor) return false;
 
     // Price filter
     if (selectedPrice) {

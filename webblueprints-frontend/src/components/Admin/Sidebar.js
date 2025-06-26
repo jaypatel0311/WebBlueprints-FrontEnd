@@ -69,17 +69,17 @@ const AdminSidebar = () => {
         }}
       >
         <Avatar sx={{ bgcolor: "white", color: "#1976d2" }}>
-          {user?.username?.charAt(0)}
+          {user.user?.username?.charAt(0)}
         </Avatar>
         <Box>
           <Typography variant="subtitle1" fontWeight="bold" color="white">
-            {user?.username}
+            {user.user?.username}
           </Typography>
           <Typography
             variant="body2"
             sx={{ color: "rgba(255, 255, 255, 0.7)" }}
           >
-            {user?.email}
+            {user.user?.email}
           </Typography>
         </Box>
       </Box>

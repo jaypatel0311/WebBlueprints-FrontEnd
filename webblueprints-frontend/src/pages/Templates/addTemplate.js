@@ -82,7 +82,7 @@ const techStacks = [
 
 const AddTemplate = () => {
   const { user } = useAuth();
-  const isAdmin = user?.role === "admin";
+  const isAdmin = user?.user?.role === "admin";
 
   const [formData, setFormData] = useState({
     title: "",
@@ -224,11 +224,14 @@ const AddTemplate = () => {
           onChange={(e, newValue) => setActiveTab(newValue)}
           variant="fullWidth"
         >
-          <Tab
-            icon={<VisibilityIcon />}
-            label="My Submissions"
-            iconPosition="start"
-          />
+          {!isAdmin && (
+            <Tab
+              icon={<VisibilityIcon />}
+              label="All Submissions"
+              iconPosition="start"
+            />
+          )}
+
           <Tab
             icon={<AddIcon />}
             label="Submit New Template"

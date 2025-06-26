@@ -420,7 +420,7 @@ function Home() {
           >
             {["Google", "Microsoft", "Amazon", "Facebook", "Airbnb"].map(
               (company) => (
-                <Grid item key={company}>
+                <Grid key={company}>
                   <Typography
                     variant="h6"
                     fontWeight="bold"

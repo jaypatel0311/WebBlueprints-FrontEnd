@@ -13,6 +13,7 @@ import {
 import PreviewIcon from "@mui/icons-material/Preview";
 import { IconButton } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import DemoButton from "../../pages/Templates/DemoButton";
 
 const TemplateCard = ({ template, onAddToCart }) => {
   return (
@@ -148,30 +149,9 @@ const TemplateCard = ({ template, onAddToCart }) => {
           gap: 1,
         }}
       >
-        <Box sx={{ display: "flex", gap: 1 }}>
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<PreviewIcon />}
-            onClick={() => window.open(template.demoUrl, "_blank")}
-            sx={{
-              borderRadius: "20px",
-              textTransform: "none",
-              borderColor: "primary.main",
-              color: "primary.main",
-              px: 2,
-              "&:hover": {
-                backgroundColor: "rgba(33, 150, 243, 0.08)",
-                borderColor: "primary.main",
-                transform: "translateY(-2px)",
-                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                transition: "all 0.2s ease",
-              },
-            }}
-          >
-            Live Demo
-          </Button>
-        </Box>
+        {/* <Box sx={{ display: "flex", gap: 1 }}>
+          <DemoButton templateId={template._id} isAdmin={true} isOwner={true} />
+        </Box> */}
 
         <Button
           variant="contained"
