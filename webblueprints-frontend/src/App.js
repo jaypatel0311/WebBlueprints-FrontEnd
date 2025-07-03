@@ -29,7 +29,10 @@ const theme = createTheme({
 function App() {
   const { user } = useAuth();
 
-  const isAdmin = user?.user?.role === "admin";
+  const userData = user?.user || user;
+  const userRole = userData?.role;
+  const isAdmin = userRole === "admin";
+  const shouldShowHeader = !isAdmin;
 
   return (
     <RoleProvider>
@@ -39,7 +42,7 @@ function App() {
             <CssBaseline />
             <BrowserRouter>
               <div className="App">
-                {!isAdmin && <Header />}
+                {shouldShowHeader && <Header />}
                 <Routes>
                   {/* Public Routes */}
                   <Route path="/login" element={<Login />} />

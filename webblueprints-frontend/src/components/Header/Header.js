@@ -184,6 +184,13 @@ function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const userData = user?.user || user;
+  const userName =
+    userData?.username || userData?.name || userData?.email || "User";
+  const userEmail = userData?.email || "";
+  const userRole = userData?.role || "user";
+  const isAdmin = userRole === "admin";
+
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -406,10 +413,10 @@ function Header() {
   const drawerContent = (
     <Box sx={{ width: 280 }} role="presentation">
       <MenuHeader>
-        <StyledAvatar sx={{ mr: 2 }}>{getInitials(user?.user)}</StyledAvatar>
+        <StyledAvatar sx={{ mr: 2 }}>{getInitials(userData)}</StyledAvatar>
         <Box>
           <Typography variant="subtitle1" fontWeight="bold">
-            {user?.user?.username || "Guest"}
+            {userName || "Guest"}
           </Typography>
           <Typography
             variant="body2"
@@ -417,7 +424,7 @@ function Header() {
             noWrap
             sx={{ maxWidth: 200 }}
           >
-            {user?.user?.email || "Not signed in"}
+            {userEmail || "Not signed in"}
           </Typography>
         </Box>
       </MenuHeader>
@@ -531,7 +538,7 @@ function Header() {
       }}
     >
       <StyledToolbar>
-        <LogoText component={Link} to={user?.user ? "/" : "/login"}>
+        <LogoText component={Link} to={userData ? "/" : "/login"}>
           WebBlueprints
         </LogoText>
 
@@ -552,7 +559,7 @@ function Header() {
 
         {isMobile ? (
           <>
-            {user?.user && (
+            {userData && (
               <Tooltip title="Shopping Cart">
                 <IconButton
                   onClick={() => setCartOpen(true)}
@@ -597,7 +604,7 @@ function Header() {
                 },
               }}
             >
-              {user?.user ? (
+              {userData ? (
                 drawerContent
               ) : (
                 <Box sx={{ width: 280, p: 3 }}>
@@ -630,7 +637,7 @@ function Header() {
           </>
         ) : (
           <NavButtons>
-            {user?.user && (
+            {userData && (
               <>
                 <StyledNavButton
                   component={Link}
@@ -667,7 +674,7 @@ function Header() {
               </>
             )}
 
-            {user?.user ? (
+            {userData ? (
               <>
                 <Tooltip title="Account & Settings">
                   <IconButton
@@ -681,7 +688,7 @@ function Header() {
                     {isLoggingOut ? (
                       <CircularProgress size={24} color="inherit" />
                     ) : (
-                      <StyledAvatar>{getInitials(user?.user)}</StyledAvatar>
+                      <StyledAvatar>{getInitials(userData)}</StyledAvatar>
                     )}
                   </IconButton>
                 </Tooltip>
@@ -724,11 +731,11 @@ function Header() {
                 >
                   <MenuHeader>
                     <StyledAvatar sx={{ width: 40, height: 40, mr: 2 }}>
-                      {getInitials(user?.user)}
+                      {getInitials(userData)}
                     </StyledAvatar>
                     <Box>
                       <Typography variant="subtitle1" fontWeight="bold">
-                        {user?.user?.username || "User"}
+                        {userName || "User"}
                       </Typography>
                       <Typography
                         variant="body2"
@@ -736,7 +743,7 @@ function Header() {
                         noWrap
                         sx={{ maxWidth: 150 }}
                       >
-                        {user?.user?.email}
+                        {userEmail}
                       </Typography>
                     </Box>
                   </MenuHeader>

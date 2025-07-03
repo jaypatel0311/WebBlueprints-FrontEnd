@@ -37,7 +37,6 @@ export const AuthProvider = ({ children }) => {
         if (JSON.stringify(userData) !== JSON.stringify(storedUser)) {
           setUser(userData);
           tokenService.setUser(userData);
-          console.log("User data updated from server:", userData);
         }
       } catch (verifyErr) {
         // Token validation failed - likely expired or invalid
@@ -71,7 +70,6 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     try {
       const response = await api.post("/auth/login", credentials);
-      console.log("Login response:", response);
 
       // Handle different response formats
       const { token, user: userData, accessToken } = response.data;
@@ -88,7 +86,6 @@ export const AuthProvider = ({ children }) => {
       const userToStore = userData || response.data.user || response.data;
 
       tokenService.setUser(userToStore);
-      console.log("User data stored in token service:", userToStore);
 
       setUser(userToStore);
 
