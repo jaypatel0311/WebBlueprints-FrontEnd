@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -10,12 +10,42 @@ import {
   CardActions,
   Box,
 } from "@mui/material";
-import PreviewIcon from "@mui/icons-material/Preview";
-import { IconButton } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import DemoButton from "../../pages/Templates/DemoButton";
+import demoService from "../../services/demoService";
+import { CircularProgress } from "@mui/material";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 const TemplateCard = ({ template, onAddToCart }) => {
+  const [isGeneratingDemo, setIsGeneratingDemo] = useState(false);
+
+  console.log("TemplateCard rendered with template:", template);
+
+  const handleGenerateDemo = async () => {
+    try {
+      // If template already has a demoUrl, just navigate to it
+      if (template.demoUrl) {
+        console.log("Using existing demo URL:", template.demoUrl);
+        window.open(template.demoUrl, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      // If no demoUrl exists, generate a new demo
+      setIsGeneratingDemo(true);
+      console.log("Generating new demo for template:", template._id);
+
+      const response = await demoService.generateDemo(template._id);
+      console.log("Demo generated successfully:", response.data);
+
+      // Navigate to the newly generated demo
+      window.open(response.data.demoUrl, "_blank", "noopener,noreferrer");
+    } catch (error) {
+      console.error("Error generating demo:", error);
+      // Show error message to user
+      alert("Failed to generate demo. Please try again.");
+    } finally {
+      setIsGeneratingDemo(false);
+    }
+  };
   return (
     <Card
       elevation={2}
@@ -149,10 +179,39 @@ const TemplateCard = ({ template, onAddToCart }) => {
           gap: 1,
         }}
       >
-        {/* <Box sx={{ display: "flex", gap: 1 }}>
-          <DemoButton templateId={template._id} isAdmin={true} isOwner={true} />
-        </Box> */}
-
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={
+              isGeneratingDemo ? (
+                <CircularProgress size={16} />
+              ) : (
+                <OpenInNewIcon />
+              )
+            }
+            onClick={handleGenerateDemo}
+            disabled={isGeneratingDemo}
+            sx={{
+              borderRadius: "20px",
+              textTransform: "none",
+              borderColor: "primary.main",
+              color: "primary.main",
+              fontSize: "0.75rem",
+              px: 2,
+              "&:hover": {
+                borderColor: "primary.dark",
+                backgroundColor: "rgba(33, 150, 243, 0.04)",
+              },
+            }}
+          >
+            {isGeneratingDemo
+              ? "Generating..."
+              : template.demoUrl
+              ? "View Demo"
+              : "Generate Demo"}
+          </Button>
+        </Box>
         <Button
           variant="contained"
           size="small"

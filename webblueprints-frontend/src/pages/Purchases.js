@@ -1,536 +1,405 @@
+// src/pages/Purchases/Purchases.js
 import React, { useState, useEffect } from "react";
 import {
-  Box,
   Container,
   Typography,
-  Paper,
-  Grid,
   Card,
   CardContent,
-  CardActions,
-  Button,
-  Divider,
+  CardMedia,
+  Grid,
+  Box,
   Chip,
-  TextField,
-  InputAdornment,
+  Button,
   CircularProgress,
   Alert,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  Pagination,
-  Stack,
-  useMediaQuery,
-  useTheme,
+  Divider,
+  Paper,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import DownloadIcon from "@mui/icons-material/Download";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import ReceiptIcon from "@mui/icons-material/Receipt";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
-import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
-import { useNavigate } from "react-router-dom";
-import { api } from "../utils/api";
-
-const OrderStatus = ({ status }) => {
-  let color = "default";
-  let label = status;
-
-  switch (status.toLowerCase()) {
-    case "completed":
-      color = "success";
-      break;
-    case "processing":
-      color = "warning";
-      break;
-    case "failed":
-      color = "error";
-      break;
-    default:
-      color = "default";
-  }
-
-  return (
-    <Chip
-      label={label}
-      color={color}
-      size="small"
-      variant="outlined"
-      sx={{
-        fontWeight: "medium",
-        fontSize: "0.75rem",
-      }}
-    />
-  );
-};
+import {
+  Download as DownloadIcon,
+  Receipt as ReceiptIcon,
+  CalendarToday as CalendarIcon,
+  AttachMoney as MoneyIcon,
+} from "@mui/icons-material";
+import { useAuth } from "../context/authContext";
+import api from "../utils/axiosInterceptor";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 const Purchases = () => {
-  const [purchases, setPurchases] = useState([]);
+  const { user } = useAuth();
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState("all");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const navigate = useNavigate();
+  const [downloadingTemplate, setDownloadingTemplate] = useState(null);
 
-  // Mock data for demonstration - replace with API call
-  const fetchPurchases = async () => {
-    setLoading(true);
-    setError("");
+  useEffect(() => {
+    fetchUserOrders();
+  }, []);
 
+  const fetchUserOrders = async () => {
     try {
-      // In a real app, call your API here
-      // const response = await api.get('/purchases', { params: { page, filter, search: searchTerm } });
-      // setPurchases(response.data.purchases);
-      // setTotalPages(response.data.totalPages);
+      setLoading(true);
+      setError("");
 
-      // Mock data for demonstration
-      setTimeout(() => {
-        const mockPurchases = [
-          {
-            id: "ord-12345",
-            date: "2023-06-15T10:30:00",
-            items: [
-              {
-                id: "tem-1",
-                title: "React Dashboard Template",
-                previewImageUrl:
-                  "https://via.placeholder.com/300x200/2196F3/FFFFFF?text=Dashboard",
-                description:
-                  "Modern admin dashboard with dark/light themes, charts and ready-to-use pages.",
-                price: 49.99,
-              },
-              {
-                id: "tem-2",
-                title: "E-commerce Store Template",
-                previewImageUrl:
-                  "https://via.placeholder.com/300x200/4CAF50/FFFFFF?text=E-commerce",
-                description:
-                  "Complete e-commerce template with product listings, cart, and checkout.",
-                price: 39.99,
-              },
-            ],
-            total: 89.98,
-            status: "Completed",
-          },
-          {
-            id: "ord-12346",
-            date: "2023-07-22T14:15:00",
-            items: [
-              {
-                id: "tem-3",
-                title: "Portfolio Template",
-                previewImageUrl:
-                  "https://via.placeholder.com/300x200/9C27B0/FFFFFF?text=Portfolio",
-                description:
-                  "Showcase your work with this beautiful, responsive portfolio template.",
-                price: 29.99,
-              },
-            ],
-            total: 29.99,
-            status: "Completed",
-          },
-          {
-            id: "ord-12347",
-            date: "2023-08-05T09:45:00",
-            items: [
-              {
-                id: "tem-4",
-                title: "Blog Template",
-                previewImageUrl:
-                  "https://via.placeholder.com/300x200/FF5722/FFFFFF?text=Blog",
-                description:
-                  "Modern blog template with featured posts, categories, and comments system.",
-                price: 0,
-              },
-            ],
-            total: 0,
-            status: "Processing",
-          },
-        ];
+      // Updated API call to match backend endpoint
+      const response = await api.get("/payments/orders"); // Changed from /purchases to /orders
 
-        setPurchases(mockPurchases);
-        setTotalPages(1);
-        setLoading(false);
-      }, 800);
+      console.log("Orders response:", response.data);
+      console.log("Orders", response.data || []);
+
+      setOrders(response.data || []);
     } catch (err) {
-      setError("Failed to load your purchases. Please try again later.");
+      console.error("Error fetching orders:", err);
+      setError(err.response?.data?.message || "Failed to load your purchases");
+    } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchPurchases();
-  }, [page, filter]); // Refetch when page or filter changes
+  const handleDownload = async (templateId, templateTitle) => {
+    try {
+      setDownloadingTemplate(templateId);
 
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
+      // Download template files
+      const response = await api.get(`/templates/${templateId}/download`, {
+        responseType: "blob",
+      });
+
+      // Create download link
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${templateTitle}.zip`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Download error:", err);
+      setError("Failed to download template");
+    } finally {
+      setDownloadingTemplate(null);
+    }
   };
 
-  const handleFilterChange = (event) => {
-    setFilter(event.target.value);
-    setPage(1); // Reset to first page when changing filters
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
-  const handlePageChange = (event, value) => {
-    setPage(value);
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case "succeeded":
+        return "success";
+      case "pending":
+        return "warning";
+      case "failed":
+        return "error";
+      default:
+        return "default";
+    }
   };
 
-  const handleDownload = (itemId) => {
-    // Implement download functionality
-    console.log(`Downloading template with ID: ${itemId}`);
-  };
-
-  const handleViewTemplate = (itemId) => {
-    // Navigate to template detail page
-    navigate(`/templates/${itemId}`);
-  };
-
-  const filteredPurchases = searchTerm
-    ? purchases.filter(
-        (purchase) =>
-          purchase.items.some((item) =>
-            item.title.toLowerCase().includes(searchTerm.toLowerCase())
-          ) || purchase.id.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : purchases;
-
-  return (
-    <Box sx={{ bgcolor: "background.default", minHeight: "100vh", py: 4 }}>
-      <Container maxWidth="lg">
-        {/* Header */}
-        <Box sx={{ mb: 4, display: "flex", alignItems: "center", gap: 2 }}>
-          <ShoppingBagIcon fontSize="large" color="primary" />
-          <Box>
-            <Typography variant="h4" fontWeight="bold" gutterBottom>
-              My Purchases
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              View and download all your purchased templates
-            </Typography>
-          </Box>
-        </Box>
-
-        {/* Search and Filter */}
-        <Paper
-          elevation={0}
+  if (loading) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Box
           sx={{
-            p: 2,
-            mb: 4,
-            borderRadius: 2,
-            boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-            border: "1px solid",
-            borderColor: "divider",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "50vh",
           }}
         >
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} md={8}>
-              <TextField
-                fullWidth
-                variant="outlined"
-                placeholder="Search by template name or order ID"
-                value={searchTerm}
-                onChange={handleSearchChange}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon color="action" />
-                    </InputAdornment>
-                  ),
-                  sx: { borderRadius: 2 },
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel id="filter-label">Filter</InputLabel>
-                <Select
-                  labelId="filter-label"
-                  id="filter-select"
-                  value={filter}
-                  onChange={handleFilterChange}
-                  label="Filter"
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <FilterListIcon color="action" />
-                    </InputAdornment>
-                  }
-                  sx={{ borderRadius: 2 }}
-                >
-                  <MenuItem value="all">All Purchases</MenuItem>
-                  <MenuItem value="recent">Recent Purchases</MenuItem>
-                  <MenuItem value="oldest">Oldest Purchases</MenuItem>
-                  <MenuItem value="free">Free Templates</MenuItem>
-                  <MenuItem value="premium">Premium Templates</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-        </Paper>
+          <CircularProgress size={60} />
+          <Typography sx={{ ml: 2 }}>Loading your purchases...</Typography>
+        </Box>
+      </Container>
+    );
+  }
 
-        {/* Content */}
-        {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
-            <CircularProgress />
-          </Box>
-        ) : error ? (
-          <Alert severity="error" sx={{ mb: 4 }}>
-            {error}
-          </Alert>
-        ) : filteredPurchases.length === 0 ? (
-          <Paper
-            elevation={0}
+  return (
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Typography variant="h3" gutterBottom sx={{ fontWeight: "bold", mb: 4 }}>
+        My Purchases
+      </Typography>
+
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError("")}>
+          {error}
+        </Alert>
+      )}
+
+      {orders.length === 0 ? (
+        <Paper sx={{ p: 6, textAlign: "center" }}>
+          <ReceiptIcon sx={{ fontSize: 80, color: "text.secondary", mb: 2 }} />
+          <Typography variant="h5" gutterBottom>
+            No purchases yet
+          </Typography>
+          <Typography variant="body1" color="text.secondary" paragraph>
+            You haven't made any purchases yet. Browse our templates to get
+            started.
+          </Typography>
+          <Button
+            variant="contained"
+            href="/templates"
             sx={{
-              p: 6,
-              textAlign: "center",
-              borderRadius: 2,
-              boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-              border: "1px solid",
-              borderColor: "divider",
+              background: "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
+              px: 4,
+              py: 1.5,
             }}
           >
-            <CloudDownloadIcon
-              sx={{ fontSize: 80, color: "text.disabled", mb: 2 }}
-            />
-            <Typography variant="h5" fontWeight="medium" gutterBottom>
-              No purchases found
-            </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph>
-              {searchTerm
-                ? "No purchases match your search criteria"
-                : "You haven't purchased any templates yet"}
-            </Typography>
-            <Button
-              variant="contained"
-              onClick={() => navigate("/templates")}
-              sx={{
-                mt: 2,
-                borderRadius: 8,
-                px: 4,
-                py: 1.2,
-                fontWeight: "bold",
-                textTransform: "none",
-                background: "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
-                boxShadow: "0 4px 10px rgba(33, 150, 243, 0.3)",
-                "&:hover": {
-                  boxShadow: "0 6px 15px rgba(33, 150, 243, 0.4)",
-                  transform: "translateY(-2px)",
-                },
-                transition: "all 0.2s ease",
-              }}
-            >
-              Browse Templates
-            </Button>
-          </Paper>
-        ) : (
-          <Box>
-            {filteredPurchases.map((purchase, index) => (
-              <Paper
-                key={purchase.id}
-                elevation={0}
-                sx={{
-                  mb: 3,
-                  overflow: "hidden",
-                  borderRadius: 2,
-                  boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-                  border: "1px solid",
-                  borderColor: "divider",
-                  transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                  "&:hover": {
-                    boxShadow: "0 8px 30px rgba(0,0,0,0.12)",
-                  },
-                }}
-              >
-                {/* Order Header */}
-                <Box
-                  sx={{
-                    bgcolor: "background.default",
-                    p: 2,
-                    borderBottom: "1px solid",
-                    borderColor: "divider",
-                    display: "flex",
-                    flexWrap: "wrap",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
-                >
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <ReceiptIcon color="action" />
+            Browse Templates
+          </Button>
+        </Paper>
+      ) : (
+        <Grid container spacing={3}>
+          {orders.map((order) => (
+            <Grid size={12} key={order._id || order.id}>
+              <Card sx={{ mb: 2, borderRadius: 2, boxShadow: 2 }}>
+                <CardContent sx={{ p: 3 }}>
+                  {/* Order Header */}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "flex-start",
+                      mb: 3,
+                    }}
+                  >
                     <Box>
-                      <Typography variant="body2" color="text.secondary">
-                        Order ID
+                      <Typography variant="h6" fontWeight="bold">
+                        Order #
+                        {order.paymentIntentId?.slice(-8) ||
+                          order.paymentIntentId?.slice(-8) ||
+                          "N/A"}
                       </Typography>
-                      <Typography variant="subtitle1" fontWeight="medium">
-                        {purchase.id}
-                      </Typography>
-                    </Box>
-                  </Box>
-
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-                    <Box sx={{ textAlign: isMobile ? "left" : "right" }}>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
-                      >
-                        <CalendarTodayIcon fontSize="small" />
-                        {/* {format(new Date(purchase.date), "MMM d, yyyy")} */}
-                      </Typography>
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight="bold"
-                        color="primary.main"
-                        sx={{ mt: 0.5 }}
-                      >
-                        {purchase.total === 0
-                          ? "FREE"
-                          : `$${purchase.total.toFixed(2)}`}
-                      </Typography>
-                    </Box>
-                    <OrderStatus status={purchase.status} />
-                  </Box>
-                </Box>
-
-                {/* Order Items */}
-                <Box sx={{ p: 0 }}>
-                  {purchase.items.map((item, itemIndex) => (
-                    <Box
-                      key={item.id}
-                      sx={{
-                        p: 2,
-                        borderBottom:
-                          itemIndex < purchase.items.length - 1
-                            ? "1px solid"
-                            : "none",
-                        borderColor: "divider",
-                        display: "flex",
-                        flexDirection: { xs: "column", sm: "row" },
-                        gap: 2,
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: { xs: "100%", sm: 120 },
-                          flexShrink: 0,
-                          alignSelf: { xs: "center", sm: "flex-start" },
-                        }}
-                      >
-                        <Box
-                          component="img"
-                          src={item.previewImageUrl}
-                          alt={item.title}
-                          sx={{
-                            width: "100%",
-                            height: 80,
-                            objectFit: "cover",
-                            borderRadius: 2,
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                          }}
-                        />
-                      </Box>
-
-                      <Box sx={{ flex: 1 }}>
-                        <Typography
-                          variant="subtitle1"
-                          fontWeight="bold"
-                          gutterBottom
-                        >
-                          {item.title}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          paragraph
-                        >
-                          {item.description}
-                        </Typography>
-                      </Box>
-
                       <Box
                         sx={{
                           display: "flex",
-                          alignSelf: "center",
-                          flexDirection: { xs: "row", sm: "column" },
-                          alignItems: { xs: "center", sm: "flex-end" },
-                          justifyContent: { xs: "space-between", sm: "center" },
+                          alignItems: "center",
                           gap: 2,
-                          width: { xs: "100%", sm: "auto" },
-                          mt: { xs: 2, sm: 0 },
+                          mt: 1,
                         }}
                       >
-                        <Typography
-                          variant="subtitle2"
-                          fontWeight="bold"
-                          color="primary.main"
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                          }}
                         >
-                          {item.price === 0
-                            ? "FREE"
-                            : `$${item.price.toFixed(2)}`}
-                        </Typography>
-
-                        <Box sx={{ display: "flex", gap: 1 }}>
-                          <Button
-                            variant="contained"
-                            size="small"
-                            startIcon={<DownloadIcon />}
-                            onClick={() => handleDownload(item.id)}
-                            sx={{
-                              borderRadius: 6,
-                              textTransform: "none",
-                              fontWeight: "medium",
-                              background:
-                                "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
-                              minWidth: 100,
-                            }}
-                          >
-                            Download
-                          </Button>
-
-                          <Button
-                            variant="outlined"
-                            size="small"
-                            startIcon={<VisibilityIcon />}
-                            onClick={() => handleViewTemplate(item.id)}
-                            sx={{
-                              borderRadius: 6,
-                              textTransform: "none",
-                              fontWeight: "medium",
-                            }}
-                          >
-                            View
-                          </Button>
+                          <CalendarIcon fontSize="small" color="action" />
+                          <Typography variant="body2" color="text.secondary">
+                            {formatDate(order.createdAt || order.purchaseDate)}
+                          </Typography>
+                        </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                          }}
+                        >
+                          <MoneyIcon fontSize="small" color="action" />
+                          <Typography variant="body2" color="text.secondary">
+                            {order.totalAmount || 0}
+                          </Typography>
                         </Box>
                       </Box>
                     </Box>
-                  ))}
-                </Box>
-              </Paper>
-            ))}
+                    <Chip
+                      label={order.status || "completed"}
+                      color={getStatusColor(order.status)}
+                      variant="contained"
+                    />
+                  </Box>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-                <Pagination
-                  count={totalPages}
-                  page={page}
-                  onChange={handlePageChange}
-                  color="primary"
-                  shape="rounded"
-                  size={isMobile ? "small" : "medium"}
-                />
-              </Box>
-            )}
-          </Box>
-        )}
-      </Container>
-    </Box>
+                  <Divider sx={{ mb: 3 }} />
+
+                  {/* Templates in Order */}
+                  <Typography variant="h6" gutterBottom>
+                    Template ({order?.templateId ? 1 : 0})
+                  </Typography>
+
+                  <Grid container spacing={2}>
+                    {order?.templates && order.templates.length > 0 ? (
+                      order.templates.map((templateItem, index) => (
+                        <Grid
+                          item
+                          xs={12}
+                          sm={6}
+                          md={4}
+                          key={templateItem.templateId._id || index}
+                        >
+                          <Card variant="outlined" sx={{ borderRadius: 2 }}>
+                            {templateItem.templateId.previewImageUrl && (
+                              <CardMedia
+                                component="img"
+                                height="140"
+                                image={templateItem.templateId.previewImageUrl}
+                                alt={templateItem.templateId.title}
+                                sx={{ objectFit: "cover" }}
+                              />
+                            )}
+                            <CardContent sx={{ p: 2 }}>
+                              <Typography
+                                variant="subtitle1"
+                                fontWeight="bold"
+                                noWrap
+                              >
+                                {templateItem.templateId.title ||
+                                  "Unknown Template"}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                gutterBottom
+                              >
+                                {templateItem.templateId.category || "General"}
+                              </Typography>
+
+                              {/* Tags */}
+                              {templateItem.templateId.tags &&
+                                templateItem.templateId.tags.length > 0 && (
+                                  <Box sx={{ mb: 1 }}>
+                                    {templateItem.templateId.tags
+                                      .slice(0, 2)
+                                      .map((tag) => (
+                                        <Chip
+                                          key={tag}
+                                          label={tag}
+                                          size="small"
+                                          sx={{
+                                            mr: 0.5,
+                                            mb: 0.5,
+                                            fontSize: "0.7rem",
+                                          }}
+                                        />
+                                      ))}
+                                  </Box>
+                                )}
+
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  mt: 2,
+                                }}
+                              >
+                                <Typography variant="h6" color="primary">
+                                  $
+                                  {(templateItem.templateId.price || 0).toFixed(
+                                    2
+                                  )}
+                                </Typography>
+                                <Box sx={{ display: "flex", gap: 1 }}>
+                                  {/* Live Demo Button */}
+                                  {templateItem.templateId.demoUrl && (
+                                    <Tooltip title="View Live Demo">
+                                      <IconButton
+                                        color="secondary"
+                                        onClick={() =>
+                                          window.open(
+                                            templateItem.templateId.demoUrl,
+                                            "_blank"
+                                          )
+                                        }
+                                        sx={{
+                                          bgcolor: "rgba(156, 39, 176, 0.1)",
+                                          "&:hover": {
+                                            bgcolor: "rgba(156, 39, 176, 0.2)",
+                                          },
+                                        }}
+                                      >
+                                        <OpenInNewIcon />
+                                      </IconButton>
+                                    </Tooltip>
+                                  )}
+
+                                  {/* Download Button */}
+                                  <Tooltip title="Download Template">
+                                    <IconButton
+                                      color="primary"
+                                      onClick={() =>
+                                        handleDownload(
+                                          templateItem.templateId._id,
+                                          templateItem.templateId.title
+                                        )
+                                      }
+                                      disabled={
+                                        downloadingTemplate ===
+                                        templateItem.templateId._id
+                                      }
+                                      sx={{
+                                        bgcolor: "rgba(33, 150, 243, 0.1)",
+                                        "&:hover": {
+                                          bgcolor: "rgba(33, 150, 243, 0.2)",
+                                        },
+                                      }}
+                                    >
+                                      {downloadingTemplate ===
+                                      templateItem.templateId._id ? (
+                                        <CircularProgress size={20} />
+                                      ) : (
+                                        <DownloadIcon />
+                                      )}
+                                    </IconButton>
+                                  </Tooltip>
+                                </Box>
+                              </Box>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                      ))
+                    ) : (
+                      <Grid item xs={12}>
+                        <Typography variant="body2" color="text.secondary">
+                          No templates found for this order
+                        </Typography>
+                      </Grid>
+                    )}
+                  </Grid>
+
+                  {/* Order Summary */}
+                  <Box
+                    sx={{
+                      mt: 3,
+                      pt: 2,
+                      borderTop: "1px solid",
+                      borderColor: "divider",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography variant="body2" color="text.secondary">
+                        Payment ID: {order.paymentIntentId || "N/A"}
+                      </Typography>
+                      <Typography variant="h6" fontWeight="bold">
+                        Total: ${order.templates?.price || order.amount || 0}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      )}
+    </Container>
   );
 };
 

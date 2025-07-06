@@ -232,6 +232,11 @@ function Header() {
     return location.pathname === path;
   };
 
+  const handleCheckout = () => {
+    setCartOpen(false);
+    navigate("/checkout");
+  };
+
   const cartDrawerContent = (
     <Box sx={{ width: { xs: "100vw", sm: 380 }, p: 3 }}>
       <Box
@@ -396,10 +401,7 @@ function Header() {
                 },
                 transition: "all 0.2s ease",
               }}
-              onClick={() => {
-                setCartOpen(false);
-                navigate("/checkout");
-              }}
+              onClick={handleCheckout}
             >
               Proceed to Checkout
             </Button>

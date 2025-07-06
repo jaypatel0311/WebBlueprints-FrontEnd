@@ -11,7 +11,6 @@ import {
   useTheme,
   useMediaQuery,
   Chip,
-  Divider,
   Grid,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
@@ -29,6 +28,8 @@ import AuthorApplication from "./AuthorApplication";
 
 const Profile = () => {
   const { user } = useAuth();
+  console.log("user in Profile:", user);
+  const userData = user.user;
   const [activeTab, setActiveTab] = useState(0);
   const navigate = useNavigate();
   const theme = useTheme();
@@ -52,9 +53,12 @@ const Profile = () => {
   // Billing Info State (mock)
   const [billingInfo, setBillingInfo] = useState({
     cardHolder: "Jay Patel",
-    cardNumber: "**** **** **** 1234",
+    cardNumber: "4242 4242 4242 4242",
     expiry: "12/26",
-    address: "123 Main St, City, Country",
+    cvv: "123",
+    address: "123 Main St, City, CA 12345",
+    zip: "12345",
+    country: "USA",
   });
 
   const handleBecomeAuthor = () => {
@@ -78,7 +82,7 @@ const Profile = () => {
 
     try {
       await authService.changePassword({
-        userId: user?._id,
+        userId: userData?._id,
         currentPassword,
         newPassword,
       });
@@ -103,7 +107,7 @@ const Profile = () => {
     setEmailChangeMessage("");
     try {
       await api.post("/auth/request-email-change", {
-        userId: user._id,
+        userId: userData._id,
         newEmail,
       });
       setShowOtpInput(true);
@@ -120,7 +124,7 @@ const Profile = () => {
     setEmailChangeMessage("");
     try {
       await api.post("/auth/verify-email-otp", {
-        userId: user._id,
+        userId: userData._id,
         newEmail,
         otp,
       });
@@ -180,14 +184,14 @@ const Profile = () => {
                   boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
                 }}
               >
-                {user?.username?.charAt(0)?.toUpperCase() || "U"}
+                {userData?.username?.charAt(0)?.toUpperCase() || "U"}
               </Avatar>
             </Grid>
             <Grid item xs>
               <Typography variant="h4" fontWeight="bold" gutterBottom>
-                {user?.username || "User"}
+                {userData?.username || "User"}
               </Typography>
-              <Typography variant="subtitle1">{user?.email}</Typography>
+              <Typography variant="subtitle1">{userData?.email}</Typography>
             </Grid>
             <Grid item>
               <Chip
@@ -299,7 +303,7 @@ const Profile = () => {
                 }}
               >
                 <PersonalInfo
-                  user={user}
+                  user={userData}
                   showChangeEmail={showChangeEmail}
                   setShowChangeEmail={setShowChangeEmail}
                   showOtpInput={showOtpInput}

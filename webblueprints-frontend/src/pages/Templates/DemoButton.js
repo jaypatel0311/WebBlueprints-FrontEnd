@@ -25,8 +25,8 @@ const DemoButton = ({ templateId, isAdmin, isOwner }) => {
   useEffect(() => {
     const fetchDemoDetails = async () => {
       try {
-        // const response = await demoService.getDemoDetails(templateId);
-        // setDemoData(response.data);
+        const response = await demoService.getDemoDetails(templateId);
+        setDemoData(response.data);
       } catch (error) {
         console.error("Error fetching demo details:", error);
       }
@@ -40,12 +40,12 @@ const DemoButton = ({ templateId, isAdmin, isOwner }) => {
     setError(null);
 
     try {
-      // const response = await demoService.generateDemo(templateId);
-      // setDemoData({ hasDemo: true, demoUrl: response.data.demoUrl });
+      const response = await demoService.generateDemo(templateId);
+      setDemoData({ hasDemo: true, demoUrl: response.data.demoUrl });
 
       // Navigate to the demo viewer page or open dialog
       if (isAdmin || isOwner) {
-        navigate(`/templates/${templateId}/demo`);
+        navigate(response.data.demoUrl);
       } else {
         setOpen(true);
       }

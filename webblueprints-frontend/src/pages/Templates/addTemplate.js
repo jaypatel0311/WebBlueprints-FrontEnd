@@ -140,6 +140,13 @@ const AddTemplate = () => {
     }));
   };
 
+  const handleTechStackChange = (event) => {
+    setFormData((prev) => ({
+      ...prev,
+      techStack: Array.isArray(event.target.value) ? event.target.value : [],
+    }));
+  };
+
   const [files, setFiles] = useState({
     previewImage: null,
     templateFiles: null,
@@ -172,7 +179,6 @@ const AddTemplate = () => {
     formDataToSend.append("title", formData.title);
     formDataToSend.append("description", formData.description);
     formDataToSend.append("category", formData.category);
-    formDataToSend.append("techStack", formData.techStack);
     formDataToSend.append("price", Number(formData.price));
     formDataToSend.append("isPremium", formData.isPremium);
     formDataToSend.append("status", isAdmin ? "published" : "pending");
@@ -180,6 +186,10 @@ const AddTemplate = () => {
     // Handle array fields with JSON.stringify
     if (formData.tags && formData.tags.length > 0) {
       formDataToSend.append("tags", JSON.stringify(formData.tags));
+    }
+
+    if (formData.techStack && formData.techStack.length > 0) {
+      formDataToSend.append("techStack", JSON.stringify(formData.techStack));
     }
 
     // Append files
@@ -484,9 +494,14 @@ const AddTemplate = () => {
                 fullWidth
                 label="Tech Stack"
                 name="techStack"
-                value={formData.techStack}
-                onChange={handleChange}
+                value={formData.techStack || []}
+                SelectProps={{
+                  multiple: true,
+                  renderValue: (selected) => selected.join(", "),
+                }}
+                onChange={handleTechStackChange}
                 sx={{ mb: 2 }}
+                helperText="Hold Ctrl/Cmd to select multiple"
               >
                 {techStacks.map((tech) => (
                   <MenuItem key={tech} value={tech}>
