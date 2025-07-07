@@ -20,6 +20,8 @@ import { SnackbarProvider } from "notistack";
 import Orders from "./pages/Admin/Orders";
 import { StripeProvider } from "./context/stripeContext";
 import Checkout from "./components/Checkout/Checkout";
+import Contact from "./pages/Home/Contact";
+import SupportQueries from "./pages/Admin/SupportQueries";
 
 const theme = createTheme({
   typography: {
@@ -103,6 +105,15 @@ function App() {
                         </ProtectedRoute>
                       }
                     />
+
+                    <Route
+                      path="/contact"
+                      element={
+                        <ProtectedRoute>
+                          <Contact />
+                        </ProtectedRoute>
+                      }
+                    />
                     {/* Admin Routes */}
                     <Route
                       path="/admin/*"
@@ -124,6 +135,10 @@ function App() {
                               <Route
                                 path="templates/edit/:id"
                                 element={<AddTemplate />}
+                              />
+                              <Route
+                                path="/support"
+                                element={<SupportQueries />}
                               />
                             </Routes>
                           </AdminLayout>

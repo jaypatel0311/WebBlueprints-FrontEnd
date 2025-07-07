@@ -16,6 +16,7 @@ import {
   ShoppingBagOutlined,
   Logout,
   OpenInBrowser,
+  ContactSupport,
 } from "@mui/icons-material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
@@ -23,6 +24,7 @@ import ConfirmDialog from "../common/ConfirmDialog";
 
 const menuItems = [
   { text: "Dashboard", icon: <Dashboard />, path: "/admin" },
+  { text: "Support Queries", icon: <ContactSupport />, path: "/admin/support" },
   { text: "Templates", icon: <OpenInBrowser />, path: "/admin/templates" },
   { text: "Users", icon: <PeopleOutline />, path: "/admin/users" },
   { text: "Orders", icon: <ShoppingBagOutlined />, path: "/admin/orders" },
