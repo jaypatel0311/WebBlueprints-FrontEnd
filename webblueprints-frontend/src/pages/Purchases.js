@@ -58,29 +58,45 @@ const Purchases = () => {
     }
   };
 
-  const handleDownload = async (templateId, templateTitle) => {
+  const downloadTemplate = async (templateId) => {
     try {
-      setDownloadingTemplate(templateId);
+      // Get template details
+      const response = await api.get(`/templates/${templateId}`);
+      const template = response.data;
 
-      // Download template files
-      const response = await api.get(`/templates/${templateId}/download`, {
-        responseType: "blob",
-      });
+      if (!template.downloadUrl) {
+        throw new Error("Download URL not available for this template");
+      }
 
-      // Create download link
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      // For S3 URLs, we can download directly
+      const fileName = `${template.title.replace(
+        /[^a-zA-Z0-9]/g,
+        "-"
+      )}-template.zip`;
+
+      // Method 1: Direct download
       const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `${templateTitle}.zip`);
+      link.href = template.downloadUrl;
+      link.download = fileName;
+      link.style.display = "none";
       document.body.appendChild(link);
       link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error("Download error:", err);
-      setError("Failed to download template");
+      document.body.removeChild(link);
+
+      // Show success message (optional)
+      // You could add a toast notification here
+      console.log(`Downloading ${template.title}...`);
+    } catch (error) {
+      console.error("Download failed:", error);
+
+      // Better error handling
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to download template. Please try again.";
+
+      alert(errorMessage);
     } finally {
-      setDownloadingTemplate(null);
     }
   };
 
@@ -328,9 +344,8 @@ const Purchases = () => {
                                     <IconButton
                                       color="primary"
                                       onClick={() =>
-                                        handleDownload(
-                                          templateItem?.templateId?._id,
-                                          templateItem?.templateId?.title
+                                        downloadTemplate(
+                                          templateItem?.templateId?._id
                                         )
                                       }
                                       disabled={
