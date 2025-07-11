@@ -39,7 +39,7 @@ const HeroSectionContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
-const HeroSection = ({ featuredTemplates = [] }) => {
+const HeroSection = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -206,10 +206,7 @@ const HeroSection = ({ featuredTemplates = [] }) => {
                   {/* Screen content */}
                   <Box
                     component="img"
-                    src={
-                      featuredTemplates[0]?.previewImageUrl ||
-                      "/template-preview1.jpg"
-                    }
+                    src="/demo-assets/laptop.png"
                     alt="Desktop Template Preview"
                     sx={{
                       width: "100%",
@@ -255,10 +252,7 @@ const HeroSection = ({ featuredTemplates = [] }) => {
                 >
                   <Box
                     component="img"
-                    src={
-                      featuredTemplates[1]?.previewImageUrl ||
-                      "/template-preview2.jpg"
-                    }
+                    src="/demo-assets/mobile.png"
                     alt="Mobile Template Preview"
                     sx={{
                       width: "100%",
@@ -273,8 +267,8 @@ const HeroSection = ({ featuredTemplates = [] }) => {
                 <Box
                   sx={{
                     position: "absolute",
-                    bottom: 10,
-                    left: 110,
+                    top: 200,
+                    right: -20,
                     width: "180px",
                     height: "150px",
                     zIndex: 2,
@@ -293,10 +287,7 @@ const HeroSection = ({ featuredTemplates = [] }) => {
                 >
                   <Box
                     component="img"
-                    src={
-                      featuredTemplates[2]?.previewImageUrl ||
-                      "/template-preview3.jpg"
-                    }
+                    src="/demo-assets/laptop.png"
                     alt="Tablet Template Preview"
                     sx={{
                       width: "100%",

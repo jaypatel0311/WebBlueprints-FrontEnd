@@ -79,7 +79,7 @@ function Home() {
   return (
     <Box>
       {/* Hero Section */}
-      <HeroSection featuredTemplates={featuredTemplates} />
+      <HeroSection />
 
       {/* Trusted By Section */}
       <TrustedBy />

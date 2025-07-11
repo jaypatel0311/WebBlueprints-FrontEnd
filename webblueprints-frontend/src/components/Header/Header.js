@@ -454,7 +454,7 @@ function Header() {
           <ListItemText
             primary="Templates"
             primaryTypographyProps={{
-              fontWeight: isActive("/templates") ? "bold" : "medium",
+              fontWeight: isActive("/templates") ? "bold" : "normal",
             }}
           />
         </ListItem>

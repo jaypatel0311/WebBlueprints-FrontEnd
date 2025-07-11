@@ -22,10 +22,12 @@ import { StripeProvider } from "./context/stripeContext";
 import Checkout from "./components/Checkout/Checkout";
 import Contact from "./pages/Home/Contact";
 import SupportQueries from "./pages/Admin/SupportQueries";
+import TemplateDetails from "./pages/Templates/templateDetails";
 
 const theme = createTheme({
   typography: {
-    fontFamily: ['"PT Sans",', "sans-serif"].join(","),
+    fontFamily:
+      "Madefor-Display, Madefor Display, Helvetica Neue, Helvetica, Arial, メイリオ, Meiryo, ヒラギノ角ゴ Pro W3, Hiragino Kaku Gothic Pro W3, Hiragino Kaku Gothic Pro, sans-serif !important",
   },
   // ...other theme options
 });
@@ -94,6 +96,14 @@ function App() {
                       element={
                         <ProtectedRoute>
                           <AddTemplate />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/templates/:id"
+                      element={
+                        <ProtectedRoute>
+                          <TemplateDetails />
                         </ProtectedRoute>
                       }
                     />

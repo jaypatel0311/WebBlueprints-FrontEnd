@@ -101,13 +101,6 @@ const FeaturedTemplates = ({
     console.log("Download template:", templateId);
   };
 
-  const handleFavorite = (e, templateId) => {
-    e.stopPropagation();
-    if (onFavoriteToggle) {
-      onFavoriteToggle(templateId);
-    }
-  };
-
   if (loading) {
     return (
       <Box sx={{ py: 10, bgcolor: "#f8fafc" }}>
@@ -221,26 +214,6 @@ const FeaturedTemplates = ({
                         </IconButton>
                       </Tooltip>
                     </ImageOverlay>
-
-                    {/* Favorite Button */}
-                    <IconButton
-                      sx={{
-                        position: "absolute",
-                        top: 8,
-                        right: 8,
-                        bgcolor: "rgba(255, 255, 255, 0.9)",
-                        "&:hover": {
-                          bgcolor: "white",
-                        },
-                      }}
-                      // onClick={(e) => handleFavorite(e, template?._id)}
-                    >
-                      {favorites.includes(template?._id) ? (
-                        <FavoriteIcon color="error" />
-                      ) : (
-                        <FavoriteBorderIcon />
-                      )}
-                    </IconButton>
                   </Box>
 
                   <CardContent sx={{ flexGrow: 1, p: 3 }}>

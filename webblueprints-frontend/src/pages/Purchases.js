@@ -224,11 +224,6 @@ const Purchases = () => {
 
                   <Divider sx={{ mb: 3 }} />
 
-                  {/* Templates in Order */}
-                  <Typography variant="h6" gutterBottom>
-                    Template ({order?.templateId ? 1 : 0})
-                  </Typography>
-
                   <Grid container spacing={2}>
                     {order?.templates && order.templates.length > 0 ? (
                       order.templates.map((templateItem, index) => (
@@ -237,15 +232,17 @@ const Purchases = () => {
                           xs={12}
                           sm={6}
                           md={4}
-                          key={templateItem.templateId._id || index}
+                          key={templateItem?.templateId?._id || index}
                         >
                           <Card variant="outlined" sx={{ borderRadius: 2 }}>
-                            {templateItem.templateId.previewImageUrl && (
+                            {templateItem?.templateId?.previewImageUrl && (
                               <CardMedia
                                 component="img"
                                 height="140"
-                                image={templateItem.templateId.previewImageUrl}
-                                alt={templateItem.templateId.title}
+                                image={
+                                  templateItem?.templateId?.previewImageUrl
+                                }
+                                alt={templateItem?.templateId?.title}
                                 sx={{ objectFit: "cover" }}
                               />
                             )}
@@ -255,7 +252,7 @@ const Purchases = () => {
                                 fontWeight="bold"
                                 noWrap
                               >
-                                {templateItem.templateId.title ||
+                                {templateItem?.templateId?.title ||
                                   "Unknown Template"}
                               </Typography>
                               <Typography
@@ -263,14 +260,15 @@ const Purchases = () => {
                                 color="text.secondary"
                                 gutterBottom
                               >
-                                {templateItem.templateId.category || "General"}
+                                {templateItem?.templateId?.category ||
+                                  "General"}
                               </Typography>
 
                               {/* Tags */}
-                              {templateItem.templateId.tags &&
-                                templateItem.templateId.tags.length > 0 && (
+                              {templateItem?.templateId?.tags &&
+                                templateItem?.templateId?.tags.length > 0 && (
                                   <Box sx={{ mb: 1 }}>
-                                    {templateItem.templateId.tags
+                                    {templateItem?.templateId?.tags
                                       .slice(0, 2)
                                       .map((tag) => (
                                         <Chip
@@ -297,19 +295,19 @@ const Purchases = () => {
                               >
                                 <Typography variant="h6" color="primary">
                                   $
-                                  {(templateItem.templateId.price || 0).toFixed(
-                                    2
-                                  )}
+                                  {(
+                                    templateItem?.templateId?.price || 0
+                                  ).toFixed(2)}
                                 </Typography>
                                 <Box sx={{ display: "flex", gap: 1 }}>
                                   {/* Live Demo Button */}
-                                  {templateItem.templateId.demoUrl && (
+                                  {templateItem?.templateId?.demoUrl && (
                                     <Tooltip title="View Live Demo">
                                       <IconButton
                                         color="secondary"
                                         onClick={() =>
                                           window.open(
-                                            templateItem.templateId.demoUrl,
+                                            templateItem?.templateId?.demoUrl,
                                             "_blank"
                                           )
                                         }
@@ -331,13 +329,13 @@ const Purchases = () => {
                                       color="primary"
                                       onClick={() =>
                                         handleDownload(
-                                          templateItem.templateId._id,
-                                          templateItem.templateId.title
+                                          templateItem?.templateId?._id,
+                                          templateItem?.templateId?.title
                                         )
                                       }
                                       disabled={
                                         downloadingTemplate ===
-                                        templateItem.templateId._id
+                                        templateItem?.templateId?._id
                                       }
                                       sx={{
                                         bgcolor: "rgba(33, 150, 243, 0.1)",
@@ -347,7 +345,7 @@ const Purchases = () => {
                                       }}
                                     >
                                       {downloadingTemplate ===
-                                      templateItem.templateId._id ? (
+                                      templateItem?.templateId?._id ? (
                                         <CircularProgress size={20} />
                                       ) : (
                                         <DownloadIcon />
@@ -389,7 +387,7 @@ const Purchases = () => {
                         Payment ID: {order.paymentIntentId || "N/A"}
                       </Typography>
                       <Typography variant="h6" fontWeight="bold">
-                        Total: ${order.templates?.price || order.amount || 0}
+                        Total: ${order.totalAmount || 0}
                       </Typography>
                     </Box>
                   </Box>

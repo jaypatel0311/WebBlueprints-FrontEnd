@@ -24,6 +24,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { Drawer, useMediaQuery, useTheme } from "@mui/material";
 import { InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import { useNavigate } from "react-router-dom";
 
 const categories = [
   "Website Templates",
@@ -106,6 +107,7 @@ function Templates() {
     message: "",
     severity: "success",
   });
+  const navigate = useNavigate();
 
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const theme = useTheme();
@@ -599,7 +601,11 @@ function Templates() {
               <Grid container spacing={2}>
                 {/* Template cards */}
                 {filteredTemplates.map((template) => (
-                  <Grid key={template._id} size={{ xs: 12, sm: 6, md: 4 }}>
+                  <Grid
+                    key={template._id}
+                    size={{ xs: 12, sm: 6, md: 4 }}
+                    onClick={() => navigate(`/templates/${template._id}`)}
+                  >
                     <TemplateCard
                       template={template}
                       onAddToCart={handleAddToCart}
