@@ -24,7 +24,6 @@ const Login = () => {
     severity: "info",
   });
   const [errors, setErrors] = useState({ email: "", password: "" });
-
   const validate = () => {
     let valid = true;
     let newErrors = { email: "", password: "" };
@@ -54,6 +53,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
+
     const formData = new FormData(e.target);
     setLoading(true);
 
@@ -63,7 +63,6 @@ const Login = () => {
         password: formData.get("password"),
       });
 
-      // Access role directly from response
       const userRole = data.role;
 
       if (userRole === "admin") {
@@ -72,12 +71,15 @@ const Login = () => {
         navigate("/", { replace: true });
       }
     } catch (error) {
-      console.log("Login error:", error);
+      // Detailed error handling
+
+      let errorMessage = "Email or password is incorrect";
+      let severity = "error";
 
       setNotification({
         open: true,
-        message: error.message || "Login failed",
-        severity: "error",
+        message: errorMessage,
+        severity: severity,
       });
     } finally {
       setLoading(false);

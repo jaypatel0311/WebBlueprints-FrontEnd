@@ -28,7 +28,6 @@ import AuthorApplication from "./AuthorApplication";
 
 const Profile = () => {
   const { user } = useAuth();
-  console.log("user in Profile:", user);
   const userData = user.user;
   const [activeTab, setActiveTab] = useState(0);
   const navigate = useNavigate();

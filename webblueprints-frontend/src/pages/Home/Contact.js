@@ -1,4 +1,3 @@
-// src/pages/Contact/Contact.js
 import React, { useState } from "react";
 import {
   Container,
@@ -20,9 +19,6 @@ import {
   Phone as PhoneIcon,
   LocationOn as LocationIcon,
   Send as SendIcon,
-  Support as SupportIcon,
-  Chat as ChatIcon,
-  Help as HelpIcon,
 } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 
@@ -260,7 +256,7 @@ const Contact = () => {
                     <Typography variant="subtitle2" color="text.secondary">
                       Phone
                     </Typography>
-                    <Typography variant="body1">+1 (555) 123-4567</Typography>
+                    <Typography variant="body1">+1 (###) 123-4567</Typography>
                   </Box>
                 </Box>
 
@@ -272,64 +268,9 @@ const Contact = () => {
                     <Typography variant="subtitle2" color="text.secondary">
                       Office
                     </Typography>
-                    <Typography variant="body1">
-                      123 Template Street
-                      <br />
-                      Design City, DC 12345
-                    </Typography>
+                    <Typography variant="body1">Opening Soon!!</Typography>
                   </Box>
                 </Box>
-              </CardContent>
-            </Card>
-
-            {/* Support Options Card */}
-            <Card elevation={2} sx={{ borderRadius: 3 }}>
-              <CardContent sx={{ p: 3 }}>
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  sx={{ fontWeight: "bold", mb: 2 }}
-                >
-                  Other Support Options
-                </Typography>
-
-                <Box sx={{ mb: 2 }}>
-                  <Button
-                    fullWidth
-                    variant="outlined"
-                    startIcon={<ChatIcon />}
-                    sx={{ justifyContent: "flex-start", mb: 1 }}
-                  >
-                    Live Chat Support
-                  </Button>
-                  <Typography variant="caption" color="text.secondary">
-                    Available 9 AM - 6 PM EST
-                  </Typography>
-                </Box>
-
-                <Box sx={{ mb: 2 }}>
-                  <Button
-                    fullWidth
-                    variant="outlined"
-                    startIcon={<HelpIcon />}
-                    sx={{ justifyContent: "flex-start", mb: 1 }}
-                    // onClick={() => window.open("/help", "_blank")}
-                  >
-                    Help Center
-                  </Button>
-                  <Typography variant="caption" color="text.secondary">
-                    Browse our FAQ and guides
-                  </Typography>
-                </Box>
-
-                <Divider sx={{ my: 2 }} />
-
-                <Typography variant="subtitle2" gutterBottom>
-                  Response Time
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  We typically respond within 24 hours during business days.
-                </Typography>
               </CardContent>
             </Card>
           </Box>

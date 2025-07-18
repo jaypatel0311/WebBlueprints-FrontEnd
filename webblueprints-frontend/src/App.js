@@ -34,7 +34,6 @@ const theme = createTheme({
 
 function App() {
   const { user } = useAuth();
-  console.log("user in App:", user);
 
   const userData = user?.user || user;
   const userRole = userData?.role;

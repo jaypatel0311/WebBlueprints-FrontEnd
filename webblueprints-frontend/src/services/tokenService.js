@@ -42,6 +42,14 @@ class TokenService {
   removeUser() {
     localStorage.removeItem("user");
   }
+
+  clearAll() {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+  }
 }
 
 export default new TokenService();

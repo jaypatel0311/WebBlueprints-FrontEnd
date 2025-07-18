@@ -23,12 +23,10 @@ import {
   CalendarToday as CalendarIcon,
   AttachMoney as MoneyIcon,
 } from "@mui/icons-material";
-import { useAuth } from "../context/authContext";
 import api from "../utils/axiosInterceptor";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 const Purchases = () => {
-  const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -44,11 +42,7 @@ const Purchases = () => {
       setError("");
 
       // Updated API call to match backend endpoint
-      const response = await api.get("/payments/orders"); // Changed from /purchases to /orders
-
-      console.log("Orders response:", response.data);
-      console.log("Orders", response.data || []);
-
+      const response = await api.get("/payments/orders");
       setOrders(response.data || []);
     } catch (err) {
       console.error("Error fetching orders:", err);

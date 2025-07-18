@@ -51,7 +51,13 @@ api.interceptors.response.use(
         return axios(originalRequest);
       } catch (refreshError) {
         // Clear auth data and redirect to login
-        tokenService.clearAll();
+        console.log(
+          "Token refresh failed, redirecting to login:",
+          refreshError
+        );
+
+        tokenService.clearToken();
+        tokenService.clearRefreshToken();
         window.location.href = "/login";
         return Promise.reject(refreshError);
       }
