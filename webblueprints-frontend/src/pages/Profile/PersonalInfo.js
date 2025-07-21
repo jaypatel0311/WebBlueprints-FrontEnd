@@ -1,58 +1,139 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Box,
-  Typography,
-  Button,
-  TextField,
-  Alert,
-  Paper,
   Grid,
-  Divider,
-  Avatar,
-  IconButton,
-  InputAdornment,
   Card,
   CardContent,
-  Chip,
+  Typography,
+  TextField,
+  Button,
+  Divider,
+  Alert,
+  InputAdornment,
+  CircularProgress,
 } from "@mui/material";
-import EmailIcon from "@mui/icons-material/Email";
-import PersonIcon from "@mui/icons-material/Person";
-import LockIcon from "@mui/icons-material/Lock";
-import EditIcon from "@mui/icons-material/Edit";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import {
+  Email as EmailIcon,
+  Lock as LockIcon,
+  Edit as EditIcon,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
+import { useAuth } from "../../context/authContext";
+import api from "../../utils/axiosInterceptor";
 
-const PersonalInfo = ({
-  user,
-  showChangeEmail,
-  setShowChangeEmail,
-  showOtpInput,
-  setShowOtpInput,
-  newEmail,
-  setNewEmail,
-  otp,
-  setOtp,
-  emailChangeMessage,
-  handleRequestEmailChange,
-  handleVerifyOtp,
-  showChangePassword,
-  setShowChangePassword,
-  currentPassword,
-  setCurrentPassword,
-  newPassword,
-  setNewPassword,
-  confirmNewPassword,
-  setConfirmNewPassword,
-  setChangePasswordError,
-  setChangePasswordSuccess,
-  changePasswordError,
-  changePasswordSuccess,
-  handleChangePassword,
-}) => {
+const PersonalInfo = () => {
+  const { user, setUser } = useAuth();
+  const UserData = user.user;
+
+  // Email change states
+  const [showChangeEmail, setShowChangeEmail] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailChangeMessage, setEmailChangeMessage] = useState("");
+
+  // Password change states
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordChangeMessage, setPasswordChangeMessage] = useState("");
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPasswordField, setShowNewPasswordField] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // Email change handler
+  const handleEmailChange = async (e) => {
+    e.preventDefault();
+
+    if (!newEmail || newEmail === UserData?.email) {
+      setEmailChangeMessage("Please enter a different email address.");
+      return;
+    }
+
+    try {
+      setEmailLoading(true);
+      setEmailChangeMessage("");
+
+      const response = await api.put("/user/update-email", {
+        email: newEmail,
+      });
+
+      if (response.data.success) {
+        setEmailChangeMessage("Email updated successfully!");
+        setShowChangeEmail(false);
+        setNewEmail("");
+
+        // Update user context with new email
+        setUser((prev) => ({
+          ...prev,
+          email: newEmail,
+        }));
+
+        // Clear success message after 3 seconds
+        setTimeout(() => {
+          setEmailChangeMessage("");
+        }, 3000);
+      }
+    } catch (error) {
+      console.error("Email change error:", error);
+      setEmailChangeMessage(
+        error.response?.data?.message ||
+          "Failed to update email. Please try again."
+      );
+    } finally {
+      setEmailLoading(false);
+    }
+  };
+
+  // Password change handler
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+
+    if (newPassword !== confirmPassword) {
+      setPasswordChangeMessage("New passwords do not match.");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordChangeMessage("Password must be at least 6 characters long.");
+      return;
+    }
+
+    try {
+      setPasswordLoading(true);
+      setPasswordChangeMessage("");
+
+      const response = await api.put("/user/change-password", {
+        currentPassword,
+        newPassword,
+      });
+
+      if (response.data.success) {
+        setPasswordChangeMessage("Password updated successfully!");
+        setShowChangePassword(false);
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+
+        // Clear success message after 3 seconds
+        setTimeout(() => {
+          setPasswordChangeMessage("");
+        }, 3000);
+      }
+    } catch (error) {
+      console.error("Password change error:", error);
+      setPasswordChangeMessage(
+        error.response?.data?.message ||
+          "Failed to update password. Please try again."
+      );
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  console.log("user in PersonalInfo:", user);
 
   return (
     <Box sx={{ maxWidth: 1000, mx: "auto", p: 4 }}>
@@ -91,7 +172,7 @@ const PersonalInfo = ({
                         Your current email
                       </Typography>
                       <Typography variant="body1" fontWeight="medium">
-                        {user?.email}
+                        {UserData?.email}
                       </Typography>
                     </Box>
                   </Box>
@@ -109,14 +190,14 @@ const PersonalInfo = ({
                   </Button>
                 </Box>
               ) : (
-                <Box component="form" onSubmit={handleRequestEmailChange}>
+                <Box component="form" onSubmit={handleEmailChange}>
                   <Typography variant="body2" color="text.secondary" paragraph>
-                    Enter your new email address below. We'll send a
-                    verification code to confirm.
+                    Enter your new email address to update your account.
                   </Typography>
 
                   <TextField
                     label="New Email"
+                    type="email"
                     value={newEmail}
                     onChange={(e) => setNewEmail(e.target.value)}
                     required
@@ -141,13 +222,21 @@ const PersonalInfo = ({
                     <Button
                       type="submit"
                       variant="contained"
+                      disabled={emailLoading}
                       sx={{ flex: 1, borderRadius: 6 }}
                     >
-                      Send OTP
+                      {emailLoading ? (
+                        <CircularProgress size={20} color="inherit" />
+                      ) : (
+                        "Update Email"
+                      )}
                     </Button>
                     <Button
                       variant="outlined"
-                      onClick={() => setShowChangeEmail(false)}
+                      onClick={() => {
+                        setShowChangeEmail(false);
+                        setNewEmail("");
+                      }}
                       sx={{ flex: 1, borderRadius: 6 }}
                     >
                       Cancel
@@ -156,55 +245,16 @@ const PersonalInfo = ({
                 </Box>
               )}
 
-              {showOtpInput && (
-                <Box
-                  component="form"
-                  onSubmit={handleVerifyOtp}
-                  sx={{
-                    mt: 3,
-                    p: 2,
-                    bgcolor: "rgba(33, 150, 243, 0.05)",
-                    borderRadius: 2,
-                  }}
-                >
-                  <Typography
-                    variant="subtitle2"
-                    fontWeight="bold"
-                    gutterBottom
-                  >
-                    Verify your email
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" mb={2}>
-                    Enter the verification code sent to {newEmail}
-                  </Typography>
-
-                  <TextField
-                    label="Enter OTP"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    required
-                    fullWidth
-                    variant="outlined"
-                    sx={{
-                      mb: 2,
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: 2,
-                      },
-                    }}
-                  />
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    fullWidth
-                    sx={{ borderRadius: 6 }}
-                  >
-                    Verify OTP
-                  </Button>
-                </Box>
-              )}
-
+              {/* Success/Error Messages */}
               {emailChangeMessage && (
-                <Alert severity="info" sx={{ mt: 2, borderRadius: 2 }}>
+                <Alert
+                  severity={
+                    emailChangeMessage.includes("successful")
+                      ? "success"
+                      : "error"
+                  }
+                  sx={{ mt: 2, borderRadius: 2 }}
+                >
                   {emailChangeMessage}
                 </Alert>
               )}
@@ -234,8 +284,7 @@ const PersonalInfo = ({
               {!showChangePassword ? (
                 <Box>
                   <Typography variant="body2" color="text.secondary" paragraph>
-                    To protect your account, make sure to use a strong, unique
-                    password.
+                    Keep your account secure with a strong password.
                   </Typography>
 
                   <Button
@@ -243,7 +292,7 @@ const PersonalInfo = ({
                     startIcon={<EditIcon />}
                     onClick={() => setShowChangePassword(true)}
                     sx={{
-                      mt: 1,
+                      mt: 2,
                       borderRadius: 6,
                     }}
                   >
@@ -251,22 +300,19 @@ const PersonalInfo = ({
                   </Button>
                 </Box>
               ) : (
-                <Box
-                  component="form"
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 3,
-                  }}
-                  onSubmit={handleChangePassword}
-                >
+                <Box component="form" onSubmit={handlePasswordChange}>
+                  <Typography variant="body2" color="text.secondary" paragraph>
+                    Enter your current password and choose a new one.
+                  </Typography>
+
                   <TextField
                     label="Current Password"
                     type={showCurrentPassword ? "text" : "password"}
-                    required
-                    fullWidth
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
+                    required
+                    fullWidth
+                    variant="outlined"
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -275,113 +321,125 @@ const PersonalInfo = ({
                       ),
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton
+                          <Button
                             onClick={() =>
                               setShowCurrentPassword(!showCurrentPassword)
                             }
+                            sx={{ minWidth: "auto", p: 1 }}
                           >
                             {showCurrentPassword ? (
-                              <VisibilityOffIcon />
+                              <VisibilityOff />
                             ) : (
-                              <VisibilityIcon />
+                              <Visibility />
                             )}
-                          </IconButton>
+                          </Button>
                         </InputAdornment>
                       ),
                     }}
-                    sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+                    sx={{
+                      mb: 2,
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: 2,
+                      },
+                    }}
                   />
 
                   <TextField
                     label="New Password"
-                    type={showNewPasswordField ? "text" : "password"}
-                    required
-                    fullWidth
+                    type={showNewPassword ? "text" : "password"}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    fullWidth
+                    variant="outlined"
                     InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <LockIcon color="action" />
+                        </InputAdornment>
+                      ),
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton
-                            onClick={() =>
-                              setShowNewPasswordField(!showNewPasswordField)
-                            }
+                          <Button
+                            onClick={() => setShowNewPassword(!showNewPassword)}
+                            sx={{ minWidth: "auto", p: 1 }}
                           >
-                            {showNewPasswordField ? (
-                              <VisibilityOffIcon />
+                            {showNewPassword ? (
+                              <VisibilityOff />
                             ) : (
-                              <VisibilityIcon />
+                              <Visibility />
                             )}
-                          </IconButton>
+                          </Button>
                         </InputAdornment>
                       ),
                     }}
-                    sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+                    sx={{
+                      mb: 2,
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: 2,
+                      },
+                    }}
                   />
 
                   <TextField
                     label="Confirm New Password"
                     type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                     fullWidth
-                    value={confirmNewPassword}
-                    onChange={(e) => setConfirmNewPassword(e.target.value)}
-                    error={
-                      newPassword !== confirmNewPassword &&
-                      confirmNewPassword !== ""
-                    }
-                    helperText={
-                      newPassword !== confirmNewPassword &&
-                      confirmNewPassword !== ""
-                        ? "Passwords don't match"
-                        : ""
-                    }
+                    variant="outlined"
                     InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <LockIcon color="action" />
+                        </InputAdornment>
+                      ),
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton
+                          <Button
                             onClick={() =>
                               setShowConfirmPassword(!showConfirmPassword)
                             }
+                            sx={{ minWidth: "auto", p: 1 }}
                           >
                             {showConfirmPassword ? (
-                              <VisibilityOffIcon />
+                              <VisibilityOff />
                             ) : (
-                              <VisibilityIcon />
+                              <Visibility />
                             )}
-                          </IconButton>
+                          </Button>
                         </InputAdornment>
                       ),
                     }}
-                    sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+                    sx={{
+                      mb: 3,
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: 2,
+                      },
+                    }}
                   />
 
-                  {changePasswordError && (
-                    <Alert severity="error" sx={{ borderRadius: 2 }}>
-                      {changePasswordError}
-                    </Alert>
-                  )}
-
-                  {changePasswordSuccess && (
-                    <Alert severity="success" sx={{ borderRadius: 2 }}>
-                      {changePasswordSuccess}
-                    </Alert>
-                  )}
-
-                  <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
+                  <Box sx={{ display: "flex", gap: 2 }}>
                     <Button
                       type="submit"
                       variant="contained"
+                      disabled={passwordLoading}
                       sx={{ flex: 1, borderRadius: 6 }}
                     >
-                      Update Password
+                      {passwordLoading ? (
+                        <CircularProgress size={20} color="inherit" />
+                      ) : (
+                        "Update Password"
+                      )}
                     </Button>
                     <Button
                       variant="outlined"
                       onClick={() => {
                         setShowChangePassword(false);
-                        setChangePasswordError("");
-                        setChangePasswordSuccess("");
+                        setCurrentPassword("");
+                        setNewPassword("");
+                        setConfirmPassword("");
                       }}
                       sx={{ flex: 1, borderRadius: 6 }}
                     >
@@ -389,6 +447,20 @@ const PersonalInfo = ({
                     </Button>
                   </Box>
                 </Box>
+              )}
+
+              {/* Success/Error Messages */}
+              {passwordChangeMessage && (
+                <Alert
+                  severity={
+                    passwordChangeMessage.includes("successful")
+                      ? "success"
+                      : "error"
+                  }
+                  sx={{ mt: 2, borderRadius: 2 }}
+                >
+                  {passwordChangeMessage}
+                </Alert>
               )}
             </CardContent>
           </Card>

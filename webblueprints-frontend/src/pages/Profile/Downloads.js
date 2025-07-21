@@ -492,165 +492,134 @@ const Downloads = () => {
                     Order History
                   </Typography>
 
-                  <Grid container spacing={3}>
+                  <Grid container spacing={2}>
                     {orders.map((order) => (
-                      <Grid size={12} key={order._id || order.id}>
+                      <Grid
+                        size={{ xs: 12, md: 6 }}
+                        key={order._id || order.id}
+                      >
                         <Card sx={{ mb: 2, borderRadius: 2, boxShadow: 2 }}>
                           <CardContent sx={{ p: 3 }}>
                             {/* Order Header */}
-                            <Box
-                              sx={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "flex-start",
-                                mb: 3,
-                              }}
-                            >
-                              <Box>
+                            <Grid container spacing={2} sx={{ mb: 3 }}>
+                              {/* Order Number - Full width on mobile */}
+                              <Grid item xs={12}>
                                 <Typography variant="h6" fontWeight="bold">
                                   Order #
                                   {order.paymentIntentId?.slice(-8) ||
                                     order._id?.slice(-8) ||
                                     "N/A"}
                                 </Typography>
+                              </Grid>
+
+                              {/* Date */}
+                              <Grid item xs={6} sm={3}>
                                 <Box
                                   sx={{
                                     display: "flex",
                                     alignItems: "center",
-                                    gap: 2,
-                                    mt: 1,
+                                    gap: 0.5,
                                   }}
                                 >
-                                  <Box
-                                    sx={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      gap: 0.5,
-                                    }}
-                                  >
-                                    <CalendarTodayIcon
-                                      fontSize="small"
-                                      color="action"
-                                    />
+                                  <CalendarTodayIcon
+                                    fontSize="small"
+                                    color="action"
+                                  />
+                                  <Box>
+                                    <Typography
+                                      variant="caption"
+                                      color="text.secondary"
+                                      display="block"
+                                    >
+                                      Date
+                                    </Typography>
                                     <Typography
                                       variant="body2"
-                                      color="text.secondary"
+                                      fontWeight="medium"
                                     >
                                       {formatPurchaseDate(
                                         order.createdAt || order.purchaseDate
                                       )}
                                     </Typography>
                                   </Box>
-                                  <Box
-                                    sx={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      gap: 0.5,
-                                    }}
-                                  >
-                                    <AttachMoneyIcon
-                                      fontSize="small"
-                                      color="action"
-                                    />
+                                </Box>
+                              </Grid>
+
+                              {/* Amount */}
+                              <Grid item xs={6} sm={3}>
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 0.5,
+                                  }}
+                                >
+                                  <AttachMoneyIcon
+                                    fontSize="small"
+                                    color="action"
+                                  />
+                                  <Box>
+                                    <Typography
+                                      variant="caption"
+                                      color="text.secondary"
+                                      display="block"
+                                    >
+                                      Total
+                                    </Typography>
                                     <Typography
                                       variant="body2"
-                                      color="text.secondary"
+                                      fontWeight="medium"
                                     >
                                       ${order.totalAmount || 0}
                                     </Typography>
                                   </Box>
                                 </Box>
-                              </Box>
-                              <Chip
-                                label={order.status || "completed"}
-                                color={getStatusColor(order.status)}
-                                variant="contained"
-                              />
-                            </Box>
+                              </Grid>
+
+                              {/* Items Count */}
+                              <Grid item xs={6} sm={3}>
+                                <Box>
+                                  <Typography
+                                    variant="caption"
+                                    color="text.secondary"
+                                    display="block"
+                                  >
+                                    Items
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    fontWeight="medium"
+                                  >
+                                    {order.items?.length || 0} template
+                                    {order.items?.length !== 1 ? "s" : ""}
+                                  </Typography>
+                                </Box>
+                              </Grid>
+
+                              {/* Status */}
+                              <Grid item xs={6} sm={3}>
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: {
+                                      xs: "flex-start",
+                                      sm: "flex-end",
+                                    },
+                                    alignItems: "center",
+                                    height: "100%",
+                                  }}
+                                >
+                                  <Chip
+                                    label={order.status || "completed"}
+                                    color={getStatusColor(order.status)}
+                                    variant="contained"
+                                    size="small"
+                                  />
+                                </Box>
+                              </Grid>
+                            </Grid>
 
                             <Divider sx={{ mb: 3 }} />
-
-                            {/* Order Items */}
-                            <Grid container spacing={2}>
-                              {order.items?.map((item, index) => (
-                                <Grid
-                                  size={{ xs: 12, sm: 6, md: 4 }}
-                                  key={index}
-                                >
-                                  <Card
-                                    variant="outlined"
-                                    sx={{ borderRadius: 2 }}
-                                  >
-                                    {item.template?.previewImageUrl && (
-                                      <CardMedia
-                                        component="img"
-                                        height="140"
-                                        image={
-                                          item.template?.templateId
-                                            .previewImageUrl
-                                        }
-                                        alt={item.template?.templateId.title}
-                                        sx={{ objectFit: "cover" }}
-                                      />
-                                    )}
-                                    <CardContent sx={{ p: 2 }}>
-                                      <Typography
-                                        variant="subtitle1"
-                                        fontWeight="bold"
-                                        noWrap
-                                      >
-                                        {item.template?.title ||
-                                          "Unknown Template"}
-                                      </Typography>
-                                      <Typography
-                                        variant="body2"
-                                        color="text.secondary"
-                                        sx={{ mb: 1 }}
-                                      >
-                                        ${item.price || 0}
-                                      </Typography>
-                                      <Box sx={{ display: "flex", gap: 1 }}>
-                                        <Tooltip title="Download Template">
-                                          <IconButton
-                                            size="small"
-                                            onClick={() =>
-                                              downloadTemplate(
-                                                item.template?.templateId._id
-                                              )
-                                            }
-                                            disabled={
-                                              downloadingId ===
-                                              item.template?.templateId._id
-                                            }
-                                            color="primary"
-                                          >
-                                            {downloadingId ===
-                                            item.template?.templateId._id ? (
-                                              <CircularProgress size={16} />
-                                            ) : (
-                                              <DownloadIcon />
-                                            )}
-                                          </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="View Details">
-                                          <IconButton
-                                            size="small"
-                                            onClick={() =>
-                                              navigate(
-                                                `/templates/${item.template?.templateId._id}`
-                                              )
-                                            }
-                                            color="primary"
-                                          >
-                                            <OpenInNewIcon />
-                                          </IconButton>
-                                        </Tooltip>
-                                      </Box>
-                                    </CardContent>
-                                  </Card>
-                                </Grid>
-                              ))}
-                            </Grid>
                           </CardContent>
                         </Card>
                       </Grid>

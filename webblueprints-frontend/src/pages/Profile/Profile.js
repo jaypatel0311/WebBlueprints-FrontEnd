@@ -42,13 +42,6 @@ const Profile = () => {
   const [changePasswordError, setChangePasswordError] = useState("");
   const [changePasswordSuccess, setChangePasswordSuccess] = useState("");
 
-  // Change Email State
-  const [showChangeEmail, setShowChangeEmail] = useState(false);
-  const [showOtpInput, setShowOtpInput] = useState(false);
-  const [newEmail, setNewEmail] = useState("");
-  const [otp, setOtp] = useState("");
-  const [emailChangeMessage, setEmailChangeMessage] = useState("");
-
   // Billing Info State (mock)
   const [billingInfo, setBillingInfo] = useState({
     cardHolder: "Jay Patel",
@@ -96,45 +89,6 @@ const Profile = () => {
     } catch (err) {
       setChangePasswordError(
         err.response?.data?.message || "Failed to change password."
-      );
-    }
-  };
-
-  // Change Email Handlers
-  const handleRequestEmailChange = async (e) => {
-    e.preventDefault();
-    setEmailChangeMessage("");
-    try {
-      await api.post("/auth/request-email-change", {
-        userId: userData._id,
-        newEmail,
-      });
-      setShowOtpInput(true);
-      setEmailChangeMessage("OTP sent to your new email.");
-    } catch (err) {
-      setEmailChangeMessage(
-        err.response?.data?.message || "Failed to send OTP."
-      );
-    }
-  };
-
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    setEmailChangeMessage("");
-    try {
-      await api.post("/auth/verify-email-otp", {
-        userId: userData._id,
-        newEmail,
-        otp,
-      });
-      setEmailChangeMessage("Email changed successfully!");
-      setShowChangeEmail(false);
-      setShowOtpInput(false);
-      setNewEmail("");
-      setOtp("");
-    } catch (err) {
-      setEmailChangeMessage(
-        err.response?.data?.message || "OTP verification failed."
       );
     }
   };
@@ -303,17 +257,6 @@ const Profile = () => {
               >
                 <PersonalInfo
                   user={userData}
-                  showChangeEmail={showChangeEmail}
-                  setShowChangeEmail={setShowChangeEmail}
-                  showOtpInput={showOtpInput}
-                  setShowOtpInput={setShowOtpInput}
-                  newEmail={newEmail}
-                  setNewEmail={setNewEmail}
-                  otp={otp}
-                  setOtp={setOtp}
-                  emailChangeMessage={emailChangeMessage}
-                  handleRequestEmailChange={handleRequestEmailChange}
-                  handleVerifyOtp={handleVerifyOtp}
                   showChangePassword={showChangePassword}
                   setShowChangePassword={setShowChangePassword}
                   currentPassword={currentPassword}
