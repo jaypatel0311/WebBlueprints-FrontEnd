@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import {
   Card,
   CardContent,
@@ -14,12 +14,12 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import demoService from "../../services/demoService";
 import { CircularProgress } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { useNavigate } from "react-router-dom";
 
 const TemplateCard = ({ template, onAddToCart }) => {
   const [isGeneratingDemo, setIsGeneratingDemo] = useState(false);
 
-  console.log("TemplateCard rendered with template:", template);
-
+  const navigate = useNavigate();
   const handleGenerateDemo = async () => {
     try {
       // If template already has a demoUrl, just navigate to it
@@ -91,7 +91,13 @@ const TemplateCard = ({ template, onAddToCart }) => {
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
+              cursor: "pointer",
+              "&:hover": {
+                textDecoration: "underline",
+                color: "primary.main",
+              },
             }}
+            onClick={() => navigate(`/templates/${template._id}`)}
           >
             {template.title}
           </Typography>

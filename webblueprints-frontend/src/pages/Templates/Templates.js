@@ -601,11 +601,7 @@ function Templates() {
               <Grid container spacing={2}>
                 {/* Template cards */}
                 {filteredTemplates.map((template) => (
-                  <Grid
-                    key={template._id}
-                    size={{ xs: 12, sm: 6, md: 4 }}
-                    onClick={() => navigate(`/templates/${template._id}`)}
-                  >
+                  <Grid key={template._id} size={{ xs: 12, sm: 6, md: 4 }}>
                     <TemplateCard
                       template={template}
                       onAddToCart={handleAddToCart}
