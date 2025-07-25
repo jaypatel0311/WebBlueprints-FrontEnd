@@ -9,8 +9,7 @@ const AdminLayout = ({ children }) => {
   const isMd = useMediaQuery(theme.breakpoints.only("md"));
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  // Calculate drawer width based on screen size
-  const DRAWER_WIDTH = isXs ? 240 : isSm ? 260 : isMd ? 280 : 300; // default for lg and up
+  const DRAWER_WIDTH = isXs ? 240 : isSm ? 260 : isMd ? 280 : 300;
 
   return (
     <Box sx={{ display: "flex" }}>

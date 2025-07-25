@@ -67,7 +67,7 @@ const TemplateCard = ({ template, onAddToCart }) => {
         image={template.previewImageUrl}
         alt={template.title}
         sx={{
-          objectFit: "cover",
+          objectFit: "contain",
           transition: "transform 0.3s ease",
           "&:hover": {
             transform: "scale(1.05)",

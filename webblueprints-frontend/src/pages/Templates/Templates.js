@@ -538,6 +538,8 @@ function Templates() {
     return true;
   });
 
+  console.log("Filtered Templates:", filteredTemplates);
+
   return (
     <Box p={3} sx={{ backgroundColor: "#f5f5f5" }}>
       {loading ? (

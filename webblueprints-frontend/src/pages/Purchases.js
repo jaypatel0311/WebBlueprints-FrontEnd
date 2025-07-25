@@ -43,6 +43,8 @@ const Purchases = () => {
 
       // Updated API call to match backend endpoint
       const response = await api.get("/payments/orders");
+      console.log("Fetched orders:", response.data);
+
       setOrders(response.data || []);
     } catch (err) {
       console.error("Error fetching orders:", err);
